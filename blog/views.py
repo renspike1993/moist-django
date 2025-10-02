@@ -43,18 +43,31 @@ def edit_blog(request):
 def manage_users(request):
     return HttpResponse("You can manage users!")
 
-# List all students with pagination
+from django.db.models import Q
+
 @login_required
 @group_required('Editors')  # Only editors can view/manage students
 def student_list(request):
-    students = Student.objects.all().order_by('full_name')  # Order alphabetically
-    paginator = Paginator(students, 10)  # Show 10 students per page
+    query = request.GET.get('q', '')  # search keyword
+    students = Student.objects.all().order_by('full_name')
 
+    if query:
+        students = students.filter(
+            Q(full_name__icontains=query) |
+            Q(course__icontains=query) |
+            Q(email__icontains=query) |
+            Q(contact_number__icontains=query)
+        )
+
+    paginator = Paginator(students, 10)  # 10 students per page
     page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)  # Handles invalid page numbers automatically
+    page_obj = paginator.get_page(page_number)
 
-    return render(request, 'student/student_list.html', {'page_obj': page_obj})
-
+    context = {
+        'page_obj': page_obj,
+        'query': query,  # send back search term to template
+    }
+    return render(request, 'student/student_list.html', context)
 
 # Add student
 @login_required
