@@ -1,0 +1,19 @@
+# Django stuff:
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+/media
+/staticfiles
+blog/static/assets/
+blog/static/demo_5/
+
+# VSCode / PyCharm
+.vscode/
+.idea/
+
+# Environments
+.env
+venv/
+ENV/
