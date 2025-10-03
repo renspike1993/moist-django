@@ -31,76 +31,99 @@
 					<div class="container">
 						<ul class="nav page-navigation ml-auto align-items-center">
 							<!-- Dropdown Menu -->
-							<li class="nav-item">
+
+							<li class="nav-item mega-menu">
 								<a href="#" class="nav-link d-flex align-items-center">
 									<i class="link-icon" data-feather="grid"></i>
 									<span class="menu-title ml-">Registrar's Office (MOIST INC)</span>
 									<i class="down-arrow ml-1"></i>
 								</a>
-
-								<!-- Submenu -->
-								<div class="submenu p-3">
-									<div class="row">
-										<div class="col-md-6">
+								<div class="submenu">
+									<!-- 1st row -->
+									<div class="col-group-wrapper row">
+										<div class="col-group col-md-3">
+											<p class="category-heading">Data Center</p>
+											<div class="submenu-item">
+												<div class="row">
+													<div class="col-md-6">
+														<ul>
+															<li class="nav-item"><a class="nav-link" href="{% url 'student_list' %}">Students</a></li>
+															<li class="nav-item"><a class="nav-link" href="pages/general/blank-page.html">Enrollments</a></li>
+															<li class="nav-item"><a class="nav-link" href="pages/general/faq.html">Promotional Reports</a></li>
+															<li class="nav-item"><a class="nav-link" href="pages/general/invoice.html">Form 201</a></li>
+														</ul>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-group col-md-3">
+											<p class="category-heading">Kiosk</p>
 											<ul class="submenu-item">
-												<li class="category-heading">Data Center</li>
-												<li class="nav-item"><a class="nav-link" href="{% url 'student_list' %}">Students</a></li>
-												<li class="nav-item"><a class="nav-link" href="#">Enrollments</a></li>
-												<li class="nav-item"><a class="nav-link" href="#">Form 201</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/auth/login.html">Transaction</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/auth/register.html">Requests</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/auth/register.html">Pending</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/auth/register.html">Overdue</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/auth/register.html">Release</a></li>
 											</ul>
 										</div>
-										<div class="col-md-6">
+										<div class="col-group col-md-3">
+											<p class="category-heading">Services</p>
 											<ul class="submenu-item">
-												<li class="category-heading">Special Orders</li>
-												<li class="nav-item"><a class="nav-link" href="#">S.O Numbers</a></li>
-												<li class="nav-item"><a class="nav-link" href="#">Deficients</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/auth/login.html">Evaluation</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/auth/register.html">Reset Portal Password</a></li>
+											</ul>
+										</div>
+										<div class="col-group col-md-3">
+											<p class="category-heading">Special Order</p>
+											<ul class="submenu-item">
+												<li class="nav-item"><a class="nav-link" href="pages/error/404.html">S.O Number</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/error/500.html">Deficients</a></li>
 											</ul>
 										</div>
 									</div>
 
-									<div class="row mt-3">
-										<div class="col-md-6">
+									<!-- 2nd row -->
+									<div class="col-group-wrapper row">
+										<div class="col-group col-md-3">
+											<p class="category-heading">Logs</p>
+											<div class="submenu-item">
+												<div class="row">
+													<div class="col-md-6">
+														<ul>
+															<li class="nav-item"><a class="nav-link" href="{% url 'student_list' %}">Visited</a></li>
+															<li class="nav-item"><a class="nav-link" href="pages/general/blank-page.html">Added</a></li>
+															<li class="nav-item"><a class="nav-link" href="pages/general/faq.html">Edited</a></li>
+															<li class="nav-item"><a class="nav-link" href="pages/general/invoice.html">Deleted</a></li>
+														</ul>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-group col-md-3">
+											<p class="category-heading">Documents</p>
 											<ul class="submenu-item">
-												<li class="category-heading">Kiosk</li>
-												<li class="nav-item"><a class="nav-link" href="#">Transactions</a></li>
-												<li class="nav-item"><a class="nav-link" href="#">Requests</a></li>
-												<li class="nav-item"><a class="nav-link" href="#">Pendings</a></li>
-												<li class="nav-item"><a class="nav-link" href="#">Overdue</a></li>
-												<li class="nav-item"><a class="nav-link" href="#">Released</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/auth/login.html">Curriculums</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/auth/register.html">Register</a></li>
 											</ul>
 										</div>
-										<div class="col-md-6">
+										<div class="col-group col-md-3">
+											<p class="category-heading">Security</p>
 											<ul class="submenu-item">
-												<li class="category-heading">Logs</li>
-												<li class="nav-item"><a class="nav-link" href="#">Visited</a></li>
-												<li class="nav-item"><a class="nav-link" href="#">Added</a></li>
-												<li class="nav-item"><a class="nav-link" href="#">Edited</a></li>
-												<li class="nav-item"><a class="nav-link" href="#">Deleted</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/auth/login.html">Users</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/auth/login.html">Groups</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/auth/register.html">Permissions</a></li>
 											</ul>
 										</div>
-									</div>
-
-									<div class="row mt-3">
-										<div class="col-md-6">
+										<div class="col-group col-md-3">
+											<p class="category-heading">Error Pages</p>
 											<ul class="submenu-item">
-												<li class="category-heading">Services</li>
-												<li class="nav-item"><a class="nav-link" href="#">Evaluation</a></li>
-												<li class="nav-item"><a class="nav-link" href="#">Curriculums</a></li>
-											</ul>
-										</div>
-										<div class="col-md-6">
-											<ul class="submenu-item">
-												<li class="category-heading">Security</li>
-												<li class="nav-item"><a class="nav-link" href="#">Users</a></li>
-												<li class="nav-item"><a class="nav-link" href="#">Groups</a></li>
-												<li class="nav-item"><a class="nav-link" href="#">Permissions</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/error/404.html">404</a></li>
+												<li class="nav-item"><a class="nav-link" href="pages/error/500.html">500</a></li>
 											</ul>
 										</div>
 									</div>
 								</div>
-								<!-- End Submenu -->
 							</li>
-
 
 							<!-- Logout -->
 							<li class="nav-item ml-auto">
@@ -125,9 +148,7 @@
 				<!-- Footer -->
 				<footer class="footer d-flex flex-column flex-md-row align-items-center justify-content-between bg-light p-3 mt-4 border-top">
 					<p class="text-muted text-center text-md-left mb-2 mb-md-0">© 2025 <a href="#" target="_blank">MOIST Inc</a>. All rights reserved.</p>
-					<p class="text-muted text-center text-md-left mb-0 d-none d-md-block">
-						Built with <i class="text-primary ml-1 icon-small" data-feather="heart"></i> using Python & Django
-					</p>
+					<p class="text-muted text-center text-md-left mb-0 d-none d-md-block">Built with <i class="text-primary ml-1 icon-small" data-feather="heart"></i> using Python & Django</p>
 				</footer>
 			</div>
 		</div>
