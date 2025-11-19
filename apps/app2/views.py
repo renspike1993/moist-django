@@ -5,9 +5,10 @@ from datetime import timedelta
 from django.utils import timezone
 
 from apps.app1.models import Student
-from .models import Book,BorrowedBook
+from .models import Book,BorrowedBook,BookBarcode
 from .forms import BookForm
 from django.contrib import messages
+from django.db.models import Prefetch
 
 
 @login_required
@@ -28,7 +29,7 @@ def book_list(request):
 @login_required
 def book_detail(request, pk):
     book = get_object_or_404(Book, pk=pk)
-    return render(request, 'app2/book/book_detail.html', {'book': book})
+    return render(request, "app2/book/book_detail.html", {"book": book})
 
 # Create a new book
 @login_required
@@ -65,16 +66,14 @@ def book_delete(request, pk):
     return render(request, 'app2/book/book_confirm_delete.html', {'book': book})
 
 @login_required
-def borrow_book_list(request, student_id):
-    student = Student.objects.get(pk=student_id)
-    books = Book.objects.all()
 
-    borrowed_books = BorrowedBook.objects.filter(borrower=student)
+def borrow_book_list(request, student_id):
+    student = get_object_or_404(Student, pk=student_id)
+    books = Book.objects.prefetch_related('barcodes').all()  # prefetch barcodes
 
     return render(request, "app2/book/borrow_book_list.html", {
         "student": student,
-        "books": books,
-        "borrowed_books": borrowed_books,
+        "books": books
     })
 
 def borrow_book(request, student_id, book_id):
@@ -89,6 +88,29 @@ def borrow_book(request, student_id, book_id):
 
     messages.success(request, f"{book.title} borrowed successfully!")
     return redirect('borrow_book_list', student_id=student_id)
+
+
+
+def bookbarcode_create(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+
+    if request.method == "POST":
+        barcode_value = request.POST.get("barcode")
+
+        if not barcode_value:
+            messages.error(request, "Barcode is required.")
+            return redirect("bookbarcode_create", pk=pk)
+
+        # Prevent duplicate barcode
+        if BookBarcode.objects.filter(barcode=barcode_value).exists():
+            messages.error(request, "This barcode already exists!")
+            return redirect("bookbarcode_create", pk=pk)
+
+        BookBarcode.objects.create(book=book, barcode=barcode_value)
+        messages.success(request, "Barcode added successfully!")
+        return redirect("book_detail", pk=pk)
+
+    return render(request, "app2/book/bookbarcode_form.html", {"book": book})
 
 # ----------------------------------------------------------------------------------
 

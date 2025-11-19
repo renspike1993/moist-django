@@ -16,4 +16,6 @@ urlpatterns = [
         views.borrow_book,
         name='borrow_book'
     ),    
+    path("books/<int:pk>/barcode/add/", views.bookbarcode_create, name="bookbarcode_create"),
+
 ]

@@ -1,7 +1,7 @@
 # apps.app3/models.py
 from django.db import models
 from apps.app1.models import Student   # adjust path if needed
-
+from django.utils import timezone
 
 
 class Book(models.Model):
@@ -56,6 +56,14 @@ class Book(models.Model):
     def __str__(self):
         return f"{self.title} by {self.author} ({self.publication_year})"
 
+class BookBarcode(models.Model):
+    book = models.ForeignKey('Book', on_delete=models.CASCADE, related_name="barcodes")
+    barcode = models.CharField(max_length=50, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    
+    def __str__(self):
+        return f"{self.barcode} - {self.book.title}"
 
 class BorrowedBook(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="borrow_records")
@@ -76,5 +84,6 @@ class BorrowedBook(models.Model):
 
     def __str__(self):
         return f"{self.book.title} borrowed by {self.borrower.first_name} {self.borrower.last_name}"
+
 
 

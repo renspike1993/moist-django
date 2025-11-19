@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+
 <h2>Book Detail</h2>
 
 <ul class="list-group">
@@ -10,7 +11,40 @@
     <li class="list-group-item"><strong>Year:</strong> {{ book.year }}</li>
 </ul>
 
+<hr>
+
+<h4>Copies</h4>
+
+<a href="{% url 'bookbarcode_create' book.pk %}" class="btn btn-primary btn-sm mb-3">
+    + Add Copies
+</a>
+{% if book.barcodes.all %}
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Barcode</th>
+                <th>Date Added</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for barcode in book.barcodes.all %}
+            <tr>
+                <td>{{ barcode.barcode }}</td>
+                <td>{{ barcode.created_at|date:"Y-m-d H:i" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="text-muted">No barcodes added yet.</p>
+{% endif %}
+
+<hr>
+
 <a href="{% url 'book_update' book.pk %}" class="btn btn-warning mt-3">Edit</a>
 <a href="{% url 'book_delete' book.pk %}" class="btn btn-danger mt-3">Delete</a>
 <a href="{% url 'book_list' %}" class="btn btn-secondary mt-3">Back to List</a>
+
 {% endblock %}

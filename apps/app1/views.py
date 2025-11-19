@@ -23,7 +23,6 @@ def student_list(request):
 @login_required
 def student_detail(request, pk):
     student = get_object_or_404(Student, pk=pk)
-
     borrowed_books = student.borrowed_books.select_related("book").all()
 
     return render(request, "app1/student/student_detail.html", {
