@@ -9,87 +9,86 @@ class BookForm(forms.ModelForm):
         widgets = {
             'control_number': forms.TextInput(attrs={
                 'class': 'form-control form-control-sm',
-                'placeholder': 'Control Number / 001'
+                'placeholder': 'Control Number'
             }),
             'isbn': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'ISBN / 020'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'ISBN'
             }),
             'title': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Title / 245$a'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Title'
             }),
             'subtitle': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Subtitle / 245$b'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Subtitle'
             }),
             'statement_of_responsibility': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Statement of Responsibility / 245$c'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Statement of Responsibility'
             }),
             'author': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Main Author / 100$a'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Main Author'
             }),
             'added_authors': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Added Authors / 700$a'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Added Authors'
             }),
             'edition': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Edition / 250'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Edition'
             }),
             'publisher': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Publisher / 264$b'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Publisher'
             }),
             'publication_place': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Place / 264$a'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Place of Publication'
             }),
             'publication_year': forms.NumberInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Year / 264$c',
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Year',
                 'min': 1000,
                 'max': 9999
             }),
             'pages': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Pagination / 300$a'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Pages'
             }),
             'illustrations': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Illustrations / 300$b'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Illustrations'
             }),
             'dimensions': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Dimensions / 300$c'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Dimensions'
             }),
             'series': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Series / 490$a'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Series'
             }),
             'notes': forms.Textarea(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'General Notes / 500',
-                'rows': 3
+                'class': 'form-control form-control-sm',
+                'placeholder': 'General Notes',
+                'rows': 2
             }),
             'summary': forms.Textarea(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Summary / 520',
-                'rows': 3
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Summary',
+                'rows': 2
             }),
             'subjects': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Subjects / 650$a'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Subjects'
             }),
             'classification': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Dewey / 082 or Local / 090'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Dewey / Local'
             }),
             'language': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg',
-                'placeholder': 'Language / 041$a'
+                'class': 'form-control form-control-sm',
+                'placeholder': 'Language'
             }),
         }
-

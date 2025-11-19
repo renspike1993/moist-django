@@ -1,64 +1,78 @@
-{% extends "base.html" %} {% block content %} {% load custom_filters %}
+{% extends 'base.html' %}
+{% block title %}Student Details{% endblock %}
+{% block content %}
+{% load custom_filters %}
 
-<div class="container mt-4">
-	<h2 class="mb-3">Student Details</h2>
+<!-- Header -->
+<div class="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
+    <i class="fas fa-user fa-3x me-3"></i>
+    <div class="lh-1">
+        <h1 class="h6 mb-0 text-white lh-1">Student Details</h1>
+        <small>- {{ student.first_name }} {{ student.last_name }}</small>
+    </div>
+</div>
 
-	<div class="card p-3">
-		<p><strong>Last Name:</strong> {{ student.last_name }}</p>
-		<p><strong>First Name:</strong> {{ student.first_name }}</p>
-		<p><strong>Middle Name:</strong> {{ student.middle_name }}</p>
-		<p><strong>Gender:</strong> {{ student.get_gender_display }}</p>
-		<p><strong>Mobile Number:</strong> {{ student.mobile_number }}</p>
-	</div>
+<!-- Student Info Card -->
+<div class="my-3 p-3 bg-body rounded shadow-sm">
+    <div class="card p-3 mb-3">
+        <p><strong>Last Name:</strong> {{ student.last_name }}</p>
+        <p><strong>First Name:</strong> {{ student.first_name }}</p>
+        <p><strong>Middle Name:</strong> {{ student.middle_name }}</p>
+        <p><strong>Gender:</strong> {{ student.get_gender_display }}</p>
+        <p><strong>Mobile Number:</strong> {{ student.mobile_number }}</p>
+    </div>
 
-	<div class="mt-3">
-		<a href="{% url 'student_update' student.id %}" class="btn btn-warning">Edit</a>
-		<a href="{% url 'student_delete' student.id %}" class="btn btn-danger">Delete</a>
-		<a href="{% url 'student_list' %}" class="btn btn-secondary">Back</a>
-		{% if user|in_group_or_superuser:"library" %}
-		<a href="{% url 'borrow_book_list' student.id %}" class="btn btn-primary sm">Borrow Books</a>
-		{% endif %}
-	</div>
-	<h3>Borrowed Books</h3>
+    <div class="mb-3">
+        <a href="{% url 'student_update' student.id %}" class="btn btn-warning">Edit</a>
+        <a href="{% url 'student_delete' student.id %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'student_list' %}" class="btn btn-secondary">Back</a>
+        {% if user|in_group_or_superuser:"library" %}
+        <a href="{% url 'borrow_book_list' student.id %}" class="btn btn-primary sm">Borrow Books</a>
+        {% endif %}
+    </div>
 
-	{% if borrowed_books %}
-	<table class="table table-bordered">
-		<thead>
-			<tr>
-				<th>Book</th>
-				<th>Barcode</th>
-				<th>Date Borrowed</th>
-				<th>Due Date</th>
-				<th>Status</th>
-				<th>Action</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for b in borrowed_books %}
-			<tr>
-				<td>{{ b.book.title }}</td>
-				<td>
-					{% if b.barcode %} {{ b.barcode.barcode }} {% else %}
-					<span class="text-muted">N/A</span>
-					{% endif %}
-				</td>
-				<td>{{ b.date_borrowed }}</td>
-				<td>{{ b.due_date }}</td>
-				<td>{{ b.get_status_display }}</td>
-				<td>
-					{% if b.status == 'borrowed' %}
-					<a href="{% url 'return_book' b.id %}" class="btn btn-sm btn-success">Return</a>
-					{% else %}
-					<span class="text-muted">Returned</span>
-					{% endif %}
-				</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	{% else %}
-	<p>No borrowed books.</p>
-	{% endif %}
+    <!-- Borrowed Books Table -->
+    <h3>Borrowed Books</h3>
+    {% if borrowed_books %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Book</th>
+                    <th>Barcode</th>
+                    <th>Date Borrowed</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in borrowed_books %}
+                <tr>
+                    <td>{{ b.book.title }}</td>
+                    <td>
+                        {% if b.barcode %} {{ b.barcode.barcode }} {% else %}
+                        <span class="text-muted">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ b.date_borrowed }}</td>
+                    <td>{{ b.due_date }}</td>
+                    <td>{{ b.get_status_display }}</td>
+                    <td>
+                        {% if b.status == 'borrowed' %}
+                        <a href="{% url 'return_book' b.id %}" class="btn btn-sm btn-success">Return</a>
+                        {% else %}
+                        <span class="text-muted">Returned</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted">No borrowed books.</p>
+    {% endif %}
 </div>
 
 {% endblock %}

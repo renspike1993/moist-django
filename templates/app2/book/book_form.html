@@ -1,11 +1,27 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% block title %}{{ form.instance.pk|yesno:"Edit Book,Add New Book" }}{% endblock %}
 {% block content %}
-<h2>{{ form.instance.pk|yesno:"Edit Book,Add New Book" }}</h2>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Save</button>
-    <a href="{% url 'book_list' %}" class="btn btn-secondary">Cancel</a>
-</form>
+<!-- Header -->
+<div class="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
+    <i class="fas fa-book fa-3x me-3"></i>
+    <div class="lh-1">
+        <h1 class="h6 mb-0 text-white lh-1">{{ form.instance.pk|yesno:"Edit Book,Add New Book" }}</h1>
+        <small>- Book Management</small>
+    </div>
+</div>
+
+<!-- Form Card -->
+<div class="my-3 p-3 bg-body rounded shadow-sm">
+    <div class="card p-4">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button type="submit" class="btn btn-success">Save</button>
+            <a href="{% url 'book_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
 {% endblock %}

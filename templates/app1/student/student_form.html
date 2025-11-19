@@ -1,9 +1,18 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
 {% block content %}
 
-<div class="container mt-4">
-    <h2 class="mb-3">{{ title }}</h2>
+<!-- Header -->
+<div class="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
+    <i class="fas fa-user-edit fa-3x me-3"></i>
+    <div class="lh-1">
+        <h1 class="h6 mb-0 text-white lh-1">{{ title }}</h1>
+        <small>- Form Entry</small>
+    </div>
+</div>
 
+<!-- Form Card -->
+<div class="my-3 p-3 bg-body rounded shadow-sm">
     <div class="card p-4">
         <form method="POST">
             {% csrf_token %}
