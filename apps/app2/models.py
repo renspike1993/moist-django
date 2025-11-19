@@ -68,7 +68,7 @@ class BookBarcode(models.Model):
 class BorrowedBook(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="borrow_records")
     borrower = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="borrowed_books")
-        
+    barcode = models.ForeignKey('BookBarcode', on_delete=models.CASCADE, related_name="borrowed_records", null=True, blank=True)
     date_borrowed = models.DateTimeField(auto_now_add=True)
     due_date = models.DateField()
     date_returned = models.DateField(blank=True, null=True)

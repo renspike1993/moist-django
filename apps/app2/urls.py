@@ -11,11 +11,16 @@ urlpatterns = [
     path('<int:pk>/edit/', views.book_update, name='book_update'),
     path('<int:pk>/delete/', views.book_delete, name='book_delete'),
     path('borrow-books/<int:student_id>/', views.borrow_book_list, name='borrow_book_list'),
+    # path(
+    #     'borrow-books/<int:student_id>/<int:book_id>/borrow/',
+    #     views.borrow_book,
+    #     name='borrow_book'
+    # ),    
+    path("books/<int:pk>/barcode/add/", views.bookbarcode_create, name="bookbarcode_create"),
     path(
-        'borrow-books/<int:student_id>/<int:book_id>/borrow/',
+        'borrow-books/<int:student_id>/<int:book_id>/<int:barcode_id>/borrow/',
         views.borrow_book,
         name='borrow_book'
-    ),    
-    path("books/<int:pk>/barcode/add/", views.bookbarcode_create, name="bookbarcode_create"),
-
+    ),
+    path('borrowed/<int:borrowed_id>/return/', views.return_book, name='return_book'),
 ]

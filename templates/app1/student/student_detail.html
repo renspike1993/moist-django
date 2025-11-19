@@ -26,18 +26,32 @@
 		<thead>
 			<tr>
 				<th>Book</th>
+				<th>Barcode</th>
 				<th>Date Borrowed</th>
 				<th>Due Date</th>
 				<th>Status</th>
+				<th>Action</th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for b in borrowed_books %}
 			<tr>
 				<td>{{ b.book.title }}</td>
+				<td>
+					{% if b.barcode %} {{ b.barcode.barcode }} {% else %}
+					<span class="text-muted">N/A</span>
+					{% endif %}
+				</td>
 				<td>{{ b.date_borrowed }}</td>
 				<td>{{ b.due_date }}</td>
-				<td>{{ b.status }}</td>
+				<td>{{ b.get_status_display }}</td>
+				<td>
+					{% if b.status == 'borrowed' %}
+					<a href="{% url 'return_book' b.id %}" class="btn btn-sm btn-success">Return</a>
+					{% else %}
+					<span class="text-muted">Returned</span>
+					{% endif %}
+				</td>
 			</tr>
 			{% endfor %}
 		</tbody>

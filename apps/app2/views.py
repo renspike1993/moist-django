@@ -65,32 +65,44 @@ def book_delete(request, pk):
         return redirect('book_list')
     return render(request, 'app2/book/book_confirm_delete.html', {'book': book})
 
-@login_required
 
+@login_required
 def borrow_book_list(request, student_id):
     student = get_object_or_404(Student, pk=student_id)
-    books = Book.objects.prefetch_related('barcodes').all()  # prefetch barcodes
+    books = Book.objects.prefetch_related("barcodes").all()
 
-    return render(request, "app2/book/borrow_book_list.html", {
+    # Prepare a set of borrowed barcode IDs
+    borrowed_barcodes = set(
+        BorrowedBook.objects.filter(borrower=student, status="borrowed")
+        .values_list("barcode_id", flat=True)
+    )
+
+    context = {
         "student": student,
-        "books": books
-    })
+        "books": books,
+        "borrowed_barcodes": borrowed_barcodes,
+    }
+    return render(request, "app2/book/borrow_book_list.html", context)
 
-def borrow_book(request, student_id, book_id):
+
+@login_required
+def borrow_book(request, student_id, book_id, barcode_id):
     student = get_object_or_404(Student, pk=student_id)
     book = get_object_or_404(Book, pk=book_id)
+    barcode = get_object_or_404(BookBarcode, pk=barcode_id)
 
+    # Create BorrowedBook record
     BorrowedBook.objects.create(
         borrower=student,
         book=book,
-        due_date=timezone.now().date() + timedelta(days=7)
+        barcode=barcode,
+        due_date=timezone.now().date() + timedelta(days=7)  # 7-day borrowing period
     )
 
-    messages.success(request, f"{book.title} borrowed successfully!")
-    return redirect('borrow_book_list', student_id=student_id)
+    messages.success(request, f"{book.title} ({barcode.barcode}) borrowed successfully!")
+    return redirect('borrow_book_list', student_id=student.id)
 
-
-
+@login_required
 def bookbarcode_create(request, pk):
     book = get_object_or_404(Book, pk=pk)
 
@@ -112,5 +124,19 @@ def bookbarcode_create(request, pk):
 
     return render(request, "app2/book/bookbarcode_form.html", {"book": book})
 
+
+@login_required
+def return_book(request, borrowed_id):
+    borrowed = get_object_or_404(BorrowedBook, pk=borrowed_id)
+
+    if borrowed.status == 'borrowed':
+        borrowed.status = 'returned'
+        borrowed.date_returned = timezone.now()
+        borrowed.save()
+        messages.success(request, f"{borrowed.book.title} has been returned successfully.")
+    else:
+        messages.warning(request, f"{borrowed.book.title} was already returned.")
+
+    return redirect('student_detail', pk=borrowed.borrower.id)
 # ----------------------------------------------------------------------------------
 
