@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Book Detail</h2>
+
+<ul class="list-group">
+    <li class="list-group-item"><strong>Title:</strong> {{ book.title }}</li>
+    <li class="list-group-item"><strong>Author:</strong> {{ book.author }}</li>
+    <li class="list-group-item"><strong>ISBN:</strong> {{ book.isbn }}</li>
+    <li class="list-group-item"><strong>Publisher:</strong> {{ book.publisher }}</li>
+    <li class="list-group-item"><strong>Year:</strong> {{ book.year }}</li>
+</ul>
+
+<a href="{% url 'book_update' book.pk %}" class="btn btn-warning mt-3">Edit</a>
+<a href="{% url 'book_delete' book.pk %}" class="btn btn-danger mt-3">Delete</a>
+<a href="{% url 'book_list' %}" class="btn btn-secondary mt-3">Back to List</a>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="mb-3">Students</h2>
+
+    <a href="{% url 'student_create' %}" class="btn btn-primary mb-3">+ Add Student</a>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Mobile</th>
+                    <th width="180">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in students %}
+                <tr>
+                    <td>
+                        <a href="{% url 'student_detail' s.id %}">
+                            {{ s.last_name }}, {{ s.first_name }}
+                        </a>
+                    </td>
+                    <td>{{ s.get_gender_display }}</td>
+                    <td>{{ s.mobile_number }}</td>
+                    <td>
+                        <a href="{% url 'student_detail' s.id %}" class="btn btn-sm btn-info">View</a>
+                        <a href="{% url 'student_update' s.id %}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{% url 'student_delete' s.id %}" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No students found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

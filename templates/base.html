@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content="" />
+		<meta name="author" content="Your Project" />
+		<title>Dashboard</title>
+
+		<!-- Bootstrap CSS -->
+		<link href="{% static 'assets/dist/css/bootstrap.min.css' %}" rel="stylesheet" />
+		<!-- Custom CSS -->
+		<link href="{% static 'css/offcanvas.css' %}" rel="stylesheet" />
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+		<style>
+			.bd-placeholder-img {
+				font-size: 1.125rem;
+				text-anchor: middle;
+				user-select: none;
+			}
+			@media (min-width: 768px) {
+				.bd-placeholder-img-lg {
+					font-size: 3.5rem;
+				}
+			}
+		</style>
+	</head>
+	<body class="bg-light">
+		<!-- Navbar -->
+		{% include "navbar.html" %}
+		<!-- Main content -->
+
+		<main class="container">{% block content %} {% endblock %}</main>
+
+		<!-- Scripts -->
+		<script src="{% static 'assets/dist/js/bootstrap.bundle.min.js' %}"></script>
+		<script src="{% static 'js/offcanvas.js' %}"></script>
+	</body>
+</html>

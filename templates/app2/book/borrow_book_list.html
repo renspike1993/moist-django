@@ -1,0 +1,43 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container mt-4">
+	<h3>Select a Book to Borrow</h3>
+	<p class="text-muted">Borrower: <strong>{{ student.last_name }}, {{ student.first_name }}</strong></p>
+
+	<div class="table-responsive mt-3">
+		<table class="table table-bordered table-striped">
+			<thead class="table-dark">
+				<tr>
+					<th>Title</th>
+					<th>Author</th>
+					<th>Year</th>
+					<th>ISBN</th>
+					<th width="180">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for book in books %}
+				<tr>
+					<td>{{ book.title }}</td>
+					<td>{{ book.author }}</td>
+					<td>{{ book.publication_year }}</td>
+					<td>{{ book.isbn }}</td>
+					<td>
+						<a href="{% url 'borrow_book' student.id book.id %}" class="btn btn-sm btn-primary"> Borrow </a>
+					</td>
+				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="5" class="text-center">No books available.</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+	<a href="{% url 'student_detail' student.id %}" class="btn btn-secondary mt-3">Back</a>
+
+
+</div>
+
+{% endblock %}
