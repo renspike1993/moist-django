@@ -9,14 +9,22 @@ from .models import Book,BorrowedBook,BookBarcode
 from .forms import BookForm
 from django.contrib import messages
 from django.db.models import Prefetch
+from django.core.paginator import Paginator
 
 
 @login_required
 def index(request):
     return render(request, 'app2/index.html')
+
 @login_required
 def opac(request):
-    return render(request, 'app2/opac.html')
+    books_list = Book.objects.all()
+    paginator = Paginator(books_list, 10)  # 10 books per page
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'app2/opac.html', {'books': page_obj, 'page_obj': page_obj})
 
 
 # List all books

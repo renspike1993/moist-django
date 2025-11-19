@@ -922,7 +922,6 @@
 
 					<div class="book-list">
 						{% for book in books %}
-						<!-- Book Item -->
 						<div class="book-media">
 							<div class="book-cover library-avatar-book">
 								{% if book.image %}
@@ -931,7 +930,6 @@
 								<span class="text-muted">No Image</span>
 								{% endif %}
 							</div>
-
 							<div class="book-details">
 								<div class="book-header">
 									<div>
@@ -939,10 +937,9 @@
 										<div class="book-author">{{ book.author }}</div>
 										<div id="book_rfid" style="display: none">{{ book.rfid }}</div>
 									</div>
-
-									<div class="availability {% if book.copies|default:0|add:0 == 0 %}unavailable{% endif %}">
+									<div class="availability {% if book.copies|default:0 == 0 %}unavailable{% endif %}">
 										<i class="fas fa-check-circle"></i>
-										<span> {% if book.copies|default:0|add:0 != 0 %} Available {% else %} Unavailable {% endif %} </span>
+										<span>{% if book.copies|default:0 != 0 %}Available{% else %}Unavailable{% endif %}</span>
 									</div>
 								</div>
 								<div class="book-description">{{ book.summary }}</div>
@@ -954,22 +951,12 @@
 									<div class="meta-item"><i class="fas fa-map-marker-alt"></i> <span>{{ book.copies }} copies</span></div>
 								</div>
 								<div class="book-actions">
-									<div class="button-group">
-										{% if book.copies|default:0|add:0 != 0 %}
-										<button class="add-to-cart reserve-btn" data-book-id="{{ book.book_id }}" data-book-title="{{ book.title|default:'Unknown Title' }}" data-book-author="{{ book.author|default:'Unknown Author' }}" data-book-rfid="{{ book.rfid|default:'N/A' }}"><i class="fas fa-book"></i> Reserve Book</button>
-										{% endif %}
-
-										<button class="add-to-cart marc-btn" data-bs-toggle="modal" data-bs-target="#marc21Modal" data-title="{{ book.title }}" data-marc="{{ book.marc_21|escape }}"><i class="fas fa-id-card"></i> MARC-21 View</button>
-
-										<button class="add-to-cart isbd-btn" data-bs-toggle="modal" data-bs-target="#isbdModal" data-title="{{ book.title }}" data-isbd="{{ book.isbd|escape }}"><i class="fas fa-file"></i> ISBD View</button>
-									</div>
+									<!-- Buttons: Reserve, MARC-21, ISBD -->
 								</div>
 							</div>
 						</div>
 						{% empty %}
-						<div class="no-books">
-							<p>No books found.</p>
-						</div>
+						<p>No books found.</p>
 						{% endfor %}
 					</div>
 				</div>
