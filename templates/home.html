@@ -1,4 +1,49 @@
-{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content %}
-<h1>Welcome to the Shared Template Demo!</h1>
-<p>This page uses templates and static files shared across all three apps.</p>
+{% extends 'base.html' %} {% block title %}App 1{% endblock %} {% block content %}
+<div class="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
+    <i class="fas fa-lock fa-3x me-3"></i>
+    <div class="lh-1">
+        <h1 class="h6 mb-0 text-white lh-1 mb-2">System Integration</h1>
+        <small>Rene M. Cabuhan II</small>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>System Name</th>
+                <th>Routes</th>
+                <th>Description</th>
+                <th width="180">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Registrar</td>
+                <td>{% url 'registrar' %}</td>
+                <td>Student Files Management System</td>
+                <td>
+                    <a href="{% url 'registrar' %}" class="btn btn-sm text-white bg-purple">Go to site</a>
+                </td>
+            </tr>
+            <tr>
+                <td>Library Management System</td>
+                <td>{% url 'library' %}</td>
+                <td>Books Management System</td>
+                <td>
+                    <a href="{% url 'library' %}" class="btn btn-sm text-white bg-purple">Go to site</a>
+                </td>
+            </tr>
+            <tr>
+                <td>Entrance Exam</td>
+                <td>{% url 'library' %}</td>
+                <td>Student Managements</td>
+                <td>
+                    <a href="{% url 'library' %}" class="btn btn-sm text-white bg-purple">Go to site</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
 {% endblock %}

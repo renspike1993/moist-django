@@ -12,10 +12,17 @@
     </div>
 </div>
 
-<!-- Borrow Books Table Card -->
 <div class="my-3 p-3 bg-body rounded shadow-sm">
+
+    <!-- Search -->
+    <form method="get" class="mb-3 d-flex">
+        <input type="text" name="q" class="form-control me-2" placeholder="Search book title, author, ISBN..."
+               value="{{ q }}">
+        <button class="btn btn-primary">Search</button>
+    </form>
+
     <div class="table-responsive mt-3">
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped align-middle">
             <thead class="table-dark">
                 <tr>
                     <th>Title</th>
@@ -23,11 +30,12 @@
                     <th>Year</th>
                     <th>ISBN</th>
                     <th>Barcode</th>
-                    <th width="180">Action</th>
+                    <th width="200">Action</th>
                 </tr>
             </thead>
+
             <tbody>
-                {% for book in books %}
+                {% for book in page_obj %}
                     {% if book.barcodes.all %}
                         {% for barcode in book.barcodes.all %}
                         <tr>
@@ -35,12 +43,23 @@
                             <td>{{ book.author }}</td>
                             <td>{{ book.publication_year }}</td>
                             <td>{{ book.isbn }}</td>
-                            <td>{{ barcode.barcode }}</td>
+
+                            <td>
+                                {{ barcode.barcode }}
+
+                                {% if barcode.id in borrowed_barcodes %}
+                                    <span class="badge bg-danger ms-2">Borrowed</span>
+                                {% else %}
+                                    <span class="badge bg-success ms-2">Available</span>
+                                {% endif %}
+                            </td>
+
                             <td>
                                 {% if barcode.id in borrowed_barcodes %}
-                                    <button class="btn btn-sm btn-secondary" disabled>Borrowed</button>
+                                    <button class="btn btn-sm btn-secondary w-100" disabled>Borrowed</button>
                                 {% else %}
-                                    <a href="{% url 'borrow_book' student.id book.id barcode.id %}" class="btn btn-sm btn-primary">Borrow</a>
+                                    <a href="{% url 'borrow_book' student.id book.id barcode.id %}"
+                                       class="btn btn-sm btn-primary w-100">Borrow</a>
                                 {% endif %}
                             </td>
                         </tr>
@@ -51,17 +70,48 @@
                             <td>{{ book.author }}</td>
                             <td>{{ book.publication_year }}</td>
                             <td>{{ book.isbn }}</td>
-                            <td colspan="2" class="text-muted">No barcodes</td>
+                            <td colspan="2" class="text-muted text-center">No barcodes available</td>
                         </tr>
                     {% endif %}
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="text-center">No books available.</td>
+                    <td colspan="6" class="text-center">No books found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination -->
+    <nav>
+        <ul class="pagination justify-content-center mt-3">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if num == page_obj.number %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}&q={{ q }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q }}">Next</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+        </ul>
+    </nav>
 
     <a href="{% url 'student_detail' student.id %}" class="btn btn-secondary mt-3">Back</a>
 </div>

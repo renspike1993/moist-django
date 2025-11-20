@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}All Borrowed Books{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
+    <i class="fas fa-book-reader fa-3x me-3"></i>
+    <div class="lh-1">
+        <h1 class="h6 mb-0 text-white lh-1">Borrowed Books</h1>
+        <small>- Complete Borrowing Records</small>
+    </div>
+</div>
+
+<div class="my-3 p-3 bg-body rounded shadow-sm">
+
+    <!-- Search --><form method="get" class="mb-3 d-flex">
+    <input 
+        type="text" 
+        name="q" 
+        class="form-control me-2" 
+        placeholder="Search student, book, barcode..." 
+        value="{{ q }}"
+    >
+    <button class="btn btn-primary">Search</button>
+</form>
+
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Student</th>
+                    <th>Book</th>
+                    <th>Barcode</th>
+                    <th>Date Borrowed</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for b in page_obj %}
+                <tr>
+                    <td>{{ b.borrower.last_name }}, {{ b.borrower.first_name }}</td>
+                    <td>{{ b.book.title }}</td>
+                    <td class="fw-semibold">{{ b.barcode.barcode }}</td>
+                    <td>{{ b.date_borrowed|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        {% if b.status == "borrowed" %}
+                            <span class="badge bg-warning text-dark">Borrowed</span>
+                        {% else %}
+                            <span class="badge bg-success">Returned</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No borrowed records.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-3">
+        <nav>
+            <ul class="pagination pagination-sm">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q }}">Previous</a>
+                    </li>
+                {% endif %}
+
+                <li class="page-item disabled">
+                    <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                </li>
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+</div>
+
+{% endblock %}

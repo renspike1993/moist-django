@@ -20,7 +20,7 @@ urlpatterns = [
     ), name='logout'),
 
     # Homepage
-    path('', home, name='home'),
+    path('home/', home, name='home'),
 
     # Your Apps
     path('registrar/', include('apps.app1.urls')),

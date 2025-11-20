@@ -1,50 +1,75 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Book Detail</h2>
+<div class="container mt-4">
 
-<ul class="list-group">
-    <li class="list-group-item"><strong>Title:</strong> {{ book.title }}</li>
-    <li class="list-group-item"><strong>Author:</strong> {{ book.author }}</li>
-    <li class="list-group-item"><strong>ISBN:</strong> {{ book.isbn }}</li>
-    <li class="list-group-item"><strong>Publisher:</strong> {{ book.publisher }}</li>
-    <li class="list-group-item"><strong>Year:</strong> {{ book.year }}</li>
-</ul>
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">{{ book.title }}</h2>
+        <a href="{% url 'book_list' %}" class="btn btn-outline-secondary btn-sm">
+            ← Back to List
+        </a>
+    </div>
 
-<hr>
+    <!-- Book Info Card -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <strong>Book Information</strong>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6"><strong>Author:</strong> {{ book.author }}</div>
+                <div class="col-md-6"><strong>ISBN:</strong> {{ book.isbn }}</div>
+                <div class="col-md-6"><strong>Publisher:</strong> {{ book.publisher }}</div>
+                <div class="col-md-6"><strong>Year:</strong> {{ book.year }}</div>
+            </div>
+        </div>
+    </div>
 
-<h4>Copies</h4>
+    <!-- Copies Section -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0">Copies</h4>
+        <a href="{% url 'bookbarcode_create' book.pk %}" class="btn btn-primary btn-sm">
+            + Add Copy
+        </a>
+    </div>
 
-<a href="{% url 'bookbarcode_create' book.pk %}" class="btn btn-primary btn-sm mb-3">
-    + Add Copies
-</a>
-{% if book.barcodes.all %}
-<div class="table-responsive">
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>Barcode</th>
-                <th>Date Added</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for barcode in book.barcodes.all %}
-            <tr>
-                <td>{{ barcode.barcode }}</td>
-                <td>{{ barcode.created_at|date:"Y-m-d H:i" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% if book.barcodes.all %}
+    <div class="row g-3">
+        {% for barcode in book.barcodes.all %}
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="fw-bold">{{ barcode.barcode }}</div>
+                        <a href="{% url 'bookbarcode_delete' book.pk barcode.pk %}" 
+                           class="btn btn-sm btn-outline-danger">
+                            🗑️
+                        </a>
+                    </div>
+                    <small class="text-muted">Added: {{ barcode.created_at|date:"Y-m-d H:i" }}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center text-muted py-4">
+        <i class="bi bi-box-seam fs-1"></i>
+        <p class="mb-0 mt-2">No copies added yet.</p>
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div class="d-flex gap-2 mt-4">
+        <a href="{% url 'book_update' book.pk %}" class="btn btn-warning">
+            ✏️ Edit
+        </a>
+        <a href="{% url 'book_delete' book.pk %}" class="btn btn-danger">
+            🗑️ Delete
+        </a>
+    </div>
+
 </div>
-{% else %}
-<p class="text-muted">No barcodes added yet.</p>
-{% endif %}
-
-<hr>
-
-<a href="{% url 'book_update' book.pk %}" class="btn btn-warning mt-3">Edit</a>
-<a href="{% url 'book_delete' book.pk %}" class="btn btn-danger mt-3">Delete</a>
-<a href="{% url 'book_list' %}" class="btn btn-secondary mt-3">Back to List</a>
 
 {% endblock %}
