@@ -810,6 +810,14 @@
 				background-color: #117a8b;
 			}
 
+			.isbd-btn {
+				background-color: #6f42c1;
+			}
+
+			.isbd-btn:hover {
+				background-color: #5a2d91;
+			}
+
 			.pagination {
 				display: flex;
 				align-items: center;
@@ -951,7 +959,21 @@
 									<div class="meta-item"><i class="fas fa-map-marker-alt"></i> <span>{{ book.copies }} copies</span></div>
 								</div>
 								<div class="book-actions">
-									<!-- Buttons: Reserve, MARC-21, ISBD -->
+									<div class="button-group">
+										<button class="btn reserve-btn" data-book-id="{{ book.id }}" data-book-title="{{ book.title }}" data-book-author="{{ book.author }}">
+											<i class="fas fa-bookmark"></i> Reserve
+										</button>
+										<button class="btn marc-btn" data-bs-toggle="modal" data-bs-target="#marc21Modal" 
+												data-title="{{ book.title }}" 
+												data-marc="{{ book.marc_data|default:'No MARC-21 data available.' }}">
+											<i class="fas fa-id-card"></i> MARC-21
+										</button>
+										<button class="btn isbd-btn" data-bs-toggle="modal" data-bs-target="#isbdModal" 
+												data-title="{{ book.title }}" 
+												data-isbd="{{ book.isbd_data|default:'No ISBD data available.' }}">
+											<i class="fas fa-file"></i> ISBD
+										</button>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -1212,23 +1234,31 @@
 				// Initialize cart
 				initializeCart();
 
-				// Fix for MARC-21 and ISBD modal functionality
-				const marcButtons = document.querySelectorAll(".marc-btn");
-				const isbdButtons = document.querySelectorAll(".isbd-btn");
+				// MARC-21 and ISBD modal functionality
+				const marc21Modal = document.getElementById('marc21Modal');
+				const isbdModal = document.getElementById('isbdModal');
 
-				marcButtons.forEach((btn) => {
-					btn.addEventListener("click", function () {
-						document.getElementById("marc21BookTitle").textContent = this.dataset.title || "";
-						document.getElementById("marc21Content").textContent = this.dataset.marc || "No MARC-21 data available.";
+				if (marc21Modal) {
+					marc21Modal.addEventListener('show.bs.modal', function (event) {
+						const button = event.relatedTarget;
+						const title = button.getAttribute('data-title');
+						const marcData = button.getAttribute('data-marc');
+						
+						document.getElementById('marc21BookTitle').textContent = title || '';
+						document.getElementById('marc21Content').textContent = marcData || 'No MARC-21 data available.';
 					});
-				});
+				}
 
-				isbdButtons.forEach((btn) => {
-					btn.addEventListener("click", function () {
-						document.getElementById("isbdBookTitle").textContent = this.dataset.title || "";
-						document.getElementById("isbdContent").textContent = this.dataset.isbd || "No ISBD data available.";
+				if (isbdModal) {
+					isbdModal.addEventListener('show.bs.modal', function (event) {
+						const button = event.relatedTarget;
+						const title = button.getAttribute('data-title');
+						const isbdData = button.getAttribute('data-isbd');
+						
+						document.getElementById('isbdBookTitle').textContent = title || '';
+						document.getElementById('isbdContent').textContent = isbdData || 'No ISBD data available.';
 					});
-				});
+				}
 
 				// Reserve button functionality
 				document.querySelectorAll(".reserve-btn").forEach((button) => {

@@ -4,7 +4,7 @@
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark" aria-label="Main navigation">
 	<div class="container-fluid">
 		<img src="{% static 'images/moist.png' %}" style ="width:50px">
-		<a class="navbar-brand" href="{% url 'home' %}" >MOIST INC</a>
+		<a class="navbar-brand" href="{% url 'home' %}" >Administrator</a>
 		<button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse"
 			aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -70,11 +70,12 @@
 {# Registrar secondary nav #}
 {% if user|in_group_or_superuser:"registrar" and "registrar" in request.path %}
 <div class="nav-scroller bg-body shadow-sm">
-	<nav class="nav nav-underline" aria-label="Secondary navigation">
-		<a class="nav-link active" href="#">Dashboard</a>
-		<a class="nav-link" href="#">Data Center</a>
-		<a class="nav-link" href="{% url 'student_list' %}">Students</a>
-		<a class="nav-link" href="#">Kiosk</a>
-	</nav>
+    <nav class="nav nav-underline" aria-label="Secondary navigation">
+        <a class="nav-link {% if request.path == '/registrar/' %}active{% endif %}" href="#">Dashboard</a>
+        <a class="nav-link {% if '/registrar/folders' in request.path %}active{% endif %}" href="{% url 'folder_list' %}">Data Center</a>
+        <a class="nav-link {% if '/registrar/students' in request.path %}active{% endif %}" href="{% url 'student_list' %}">Students</a>
+        <a class="nav-link {% if '/registrar/kiosk' in request.path %}active{% endif %}" href="#">Kiosk</a>
+    </nav>
 </div>
 {% endif %}
+

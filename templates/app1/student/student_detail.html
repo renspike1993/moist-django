@@ -15,6 +15,13 @@
 <!-- Student Info Card -->
 <div class="my-3 p-3 bg-body rounded shadow-sm">
     <div class="card p-3 mb-3">
+        <p><strong>Folder:</strong>
+            {% if student.folder %}
+            {{ student.folder.folder_name }} (ID: {{ student.folder.id }})
+            {% else %}
+            None
+            {% endif %}
+        </p>
         <p><strong>Last Name:</strong> {{ student.last_name }}</p>
         <p><strong>First Name:</strong> {{ student.first_name }}</p>
         <p><strong>Middle Name:</strong> {{ student.middle_name }}</p>

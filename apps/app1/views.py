@@ -2,11 +2,11 @@ from django.contrib.auth.decorators import login_required
 
 
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Student
+from .models import Student,Folder
 from .forms import StudentForm
-
+from django.contrib import messages
 from apps.app2.models import BorrowedBook
-
+from .forms import FolderForm
 
 @login_required
 def index(request):
@@ -50,7 +50,7 @@ def student_update(request, pk):
         form = StudentForm(request.POST, instance=student)
         if form.is_valid():
             form.save()
-            return redirect("app1/student_list")
+            return redirect("student_list")  # corrected
     else:
         form = StudentForm(instance=student)
     return render(request, "app1/student/student_form.html", {"form": form, "title": "Edit Student"})
@@ -64,3 +64,44 @@ def student_delete(request, pk):
         return redirect("student_list")
     return render(request, "app1/student/student_confirm_delete.html", {"student": student})
 
+# --------------------- Folders -----------------------------------
+@login_required
+def folder_list(request):
+    folders = Folder.objects.all().order_by('-created_at')
+    return render(request, 'app1/folder/folder_list.html', {'folders': folders})
+
+@login_required
+def folder_create(request):
+    if request.method == 'POST':
+        form = FolderForm(request.POST)
+        if form.is_valid():
+            folder = form.save(commit=False)
+            folder.created_by = request.user
+            folder.save()
+            messages.success(request, 'Folder created successfully!')
+            return redirect('folder_list')
+    else:
+        form = FolderForm()
+    return render(request, 'app1/folder/folder_form.html', {'form': form, 'title': 'Add Folder'})
+
+@login_required
+def folder_update(request, pk):
+    folder = get_object_or_404(Folder, pk=pk)
+    if request.method == 'POST':
+        form = FolderForm(request.POST, instance=folder)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Folder updated successfully!')
+            return redirect('folder_list')
+    else:
+        form = FolderForm(instance=folder)
+    return render(request, 'app1/folder/folder_form.html', {'form': form, 'title': 'Edit Folder'})
+
+@login_required
+def folder_delete(request, pk):
+    folder = get_object_or_404(Folder, pk=pk)
+    if request.method == 'POST':
+        folder.delete()
+        messages.success(request, 'Folder deleted successfully!')
+        return redirect('folder_list')
+    return render(request, 'app1/folder/folder_confirm_delete.html', {'folder': folder})
