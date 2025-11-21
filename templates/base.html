@@ -11,188 +11,275 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<script>
 		tailwind.config = {
-			darkMode: 'class',
 			theme: {
 				extend: {
 					colors: {
 						primary: {
-							50: '#eff6ff',
-							500: '#3b82f6',
-							600: '#2563eb',
-							700: '#1d4ed8',
+							50: '#fafbfc',
+							100: '#f4f6f8',
+							200: '#e5e9f0',
+							300: '#d1d9e6',
+							400: '#9faec7',
+							500: '#6b7ba0',
+							600: '#4a5a7a',
+							700: '#374258',
+							800: '#252e40',
+							900: '#171d2d',
+						},
+						elegant: {
+							50: '#f8f9fa',
+							100: '#e9ecef',
+							200: '#dee2e6',
+							300: '#ced4da',
+							400: '#adb5bd',
+							500: '#6c757d',
+							600: '#495057',
+							700: '#343a40',
+							800: '#212529',
+							900: '#121417',
+						},
+						accent: {
+							50: '#f0f9ff',
+							100: '#e0f2fe',
+							200: '#bae6fd',
+							300: '#7dd3fc',
+							400: '#38bdf8',
+							500: '#0ea5e9',
+							600: '#0284c7',
+							700: '#0369a1',
+							800: '#075985',
+							900: '#0c4a6e',
 						}
+					},
+					fontFamily: {
+						'sans': ['Inter', 'system-ui', 'sans-serif'],
 					}
 				}
 			}
 		}
 	</script>
 	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+		
+		* {
+			font-family: 'Inter', sans-serif;
+		}
+		
 		.sidebar-transition {
-			transition: all 0.3s ease;
+			transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 		}
 
 		.content-transition {
-			transition: all 0.3s ease;
+			transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 		}
 
 		.active-nav-item {
-			background-color: rgba(59, 130, 246, 0.1);
-			border-right: 3px solid #3b82f6;
-			color: #3b82f6;
+			background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+			color: white;
+			font-weight: 500;
+			box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+		}
+		
+		.nav-icon {
+			width: 18px;
+			text-align: center;
+		}
+		
+		.slim-scrollbar::-webkit-scrollbar {
+			width: 4px;
+		}
+		
+		.slim-scrollbar::-webkit-scrollbar-track {
+			background: #f1f5f9;
+			border-radius: 2px;
+		}
+		
+		.slim-scrollbar::-webkit-scrollbar-thumb {
+			background: #cbd5e1;
+			border-radius: 2px;
+		}
+		
+		.slim-scrollbar::-webkit-scrollbar-thumb:hover {
+			background: #94a3b8;
+		}
+
+		.glass-sidebar {
+			background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+			backdrop-filter: blur(10px);
+		}
+
+		.glass-header {
+			background: rgba(255, 255, 255, 0.95);
+			backdrop-filter: blur(10px);
+			border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+		}
+
+		.elegant-shadow {
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+		}
+
+		.hover-lift {
+			transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+
+		.hover-lift:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 		}
 	</style>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-elegant-50">
 	<div class="flex h-screen">
-		<!-- Sidebar -->
-		<div class="sidebar-transition w-64 bg-gray-900 text-white flex flex-col">
+		<!-- Elegant Sidebar -->
+		<div class="sidebar-transition w-20 lg:w-56 glass-sidebar border-r border-elegant-700 flex flex-col elegant-shadow">
 			<!-- Logo -->
-			<div class="p-6 border-b border-gray-700">
-				<h1 class="text-xl font-bold flex items-center">
-					<i class="fas fa-cube mr-2 text-blue-500"></i>
-					MOIST<span class="text-blue-500"> &nbsp;INC</span>
+			<div class="p-5 lg:p-6 border-b border-elegant-700">
+				<h1 class="text-xl font-bold flex items-center justify-center lg:justify-start">
+					<div class="w-8 h-8 bg-gradient-to-br from-accent-500 to-accent-600 rounded-lg flex items-center justify-center shadow-lg">
+						<i class="fas fa-cube text-white text-sm"></i>
+					</div>
+					<span class="hidden lg:inline ml-3 text-white font-light tracking-wide">MOIST<span class="font-semibold text-accent-300">INC</span></span>
 				</h1>
 			</div>
 
 			<!-- User Profile -->
-			<div class="p-4 border-b border-gray-700 flex items-center space-x-3">
-				<div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
-					<span class="font-bold">RC</span>
+			<div class="p-4 border-b border-elegant-700 flex items-center justify-center lg:justify-start space-x-0 lg:space-x-3">
+				<div class="h-9 w-9 rounded-full bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center text-white text-sm font-medium shadow-lg hover-lift">
+					RC
 				</div>
-				<div>
-					<p class="font-medium">Rene M. Cabuhan II</p>
-					<p class="text-xs text-gray-400">Administrator</p>
+				<div class="hidden lg:block">
+					<p class="text-sm font-medium text-white">Rene M. Cabuhan II</p>
+					<p class="text-xs text-elegant-300">Administrator</p>
 				</div>
 			</div>
 
 			<!-- Navigation -->
-			<div class="flex-1 overflow-y-auto py-4">
-				<ul class="space-y-1 px-3">
-					<a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-800
-   {% if request.resolver_match.url_name == 'dashboard' %} bg-gray-800 text-white {% endif %}">
-						<i class="fas fa-tachometer-alt mr-3"></i>
-						<span>Dashboard</span>
-					</a>
+			<div class="flex-1 overflow-y-auto py-5">
+				<ul class="space-y-2 px-3">
+					<li>
+						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift
+   {% if request.resolver_match.url_name == 'dashboard' %} active-nav-item {% endif %}">
+							<i class="fas fa-tachometer-alt nav-icon"></i>
+							<span class="hidden lg:inline ml-3 text-sm">Dashboard</span>
+						</a>
+					</li>
 
-					<a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-800 
-   {% if request.resolver_match.url_name == 'transactions' %} bg-gray-800 text-white {% endif %}">
-						<i class="fas fa-tachometer-alt mr-3"></i>
-						<span>Transactions</span>
-					</a>
+					<li>
+						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift
+   {% if request.resolver_match.url_name == 'transactions' %} active-nav-item {% endif %}">
+							<i class="fas fa-exchange-alt nav-icon"></i>
+							<span class="hidden lg:inline ml-3 text-sm">Transactions</span>
+						</a>
+					</li>
 
-					<a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-800
-   {% if request.resolver_match.url_name == 'collections' %} bg-gray-800 text-white {% endif %}">
-						<i class="fas fa-folder mr-3"></i>
-						<span>Collections</span>
-					</a>
+					<li>
+						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift
+   {% if request.resolver_match.url_name == 'collections' %} active-nav-item {% endif %}">
+							<i class="fas fa-folder nav-icon"></i>
+							<span class="hidden lg:inline ml-3 text-sm">Collections</span>
+						</a>
+					</li>
 
-					<a href="{% url 'book_list' %}" class="flex items-center p-3 rounded-lg hover:bg-gray-800
+					<li>
+						<a href="{% url 'book_list' %}" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift
    {% if request.resolver_match.url_name == 'book_list' %} active-nav-item {% endif %}">
-						<i class="fas fa-book mr-3"></i>
-						<span>Books</span>
-					</a>
+							<i class="fas fa-book nav-icon"></i>
+							<span class="hidden lg:inline ml-3 text-sm">Books</span>
+						</a>
+					</li>
 
-					<a href="{% url 'library_students' %}" class="flex items-center p-3 rounded-lg hover:bg-gray-800
-   {% if request.resolver_match.url_name == 'library_students' %} active-nav-item  {% endif %}">
-						<i class="fas fa-users mr-3"></i>
-						<span>Members</span>
-					</a>
-
-
+					<li>
+						<a href="{% url 'library_students' %}" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift
+   {% if request.resolver_match.url_name == 'library_students' %} active-nav-item {% endif %}">
+							<i class="fas fa-users nav-icon"></i>
+							<span class="hidden lg:inline ml-3 text-sm">Members</span>
+						</a>
+					</li>
 				</ul>
 
 				<!-- Section Divider -->
-				<div class="px-3 mt-6 mb-2">
-					<p class="text-xs uppercase text-gray-500 font-semibold">Tools</p>
+				<div class="px-3 mt-8 mb-3 hidden lg:block">
+					<p class="text-xs uppercase text-elegant-400 font-medium tracking-wider">Tools</p>
 				</div>
 
-				<ul class="space-y-1 px-3">
+				<ul class="space-y-2 px-3 mt-4">
+					<li>
+						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift">
+							<i class="fas fa-boxes nav-icon"></i>
+							<span class="hidden lg:inline ml-3 text-sm">Inventory</span>
+						</a>
+					</li>
+					<li>
+						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift">
+							<i class="fas fa-chart-bar nav-icon"></i>
+							<span class="hidden lg:inline ml-3 text-sm">Reports</span>
+						</a>
+					</li>
 
 					<li>
-						<a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-800">
-							<i class="fas fa-calendar-alt mr-3"></i>
-							<span>Inventory</span>
+						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift relative">
+							<i class="fas fa-envelope nav-icon"></i>
+							<span class="hidden lg:inline ml-3 text-sm">Messages</span>
+							<span class="absolute -top-1 -right-1 bg-red-400 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center shadow">3</span>
 						</a>
 					</li>
 					<li>
-						<a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-800">
-							<i class="fas fa-file-alt mr-3"></i>
-							<span>Reports</span>
-						</a>
-					</li>
-
-					<li>
-						<a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-800">
-							<i class="fas fa-envelope mr-3"></i>
-							<span>Messages</span>
-							<span
-								class="ml-auto bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-						</a>
-					</li>
-					<li>
-						<a href="#" class="flex items-center p-3 rounded-lg hover:bg-gray-800">
-							<i class="fas fa-cog mr-3"></i>
-							<span>Settings</span>
+						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift">
+							<i class="fas fa-cog nav-icon"></i>
+							<span class="hidden lg:inline ml-3 text-sm">Settings</span>
 						</a>
 					</li>
 				</ul>
 			</div>
 
 			<!-- Sidebar Footer -->
-			<div class="p-4 border-t border-gray-700">
-
+			<div class="p-4 border-t border-elegant-700">
 				{% if user.is_authenticated %}
 				<form method="POST" action="{% url 'logout' %}">
 					{% csrf_token %}
-
-					<button class="flex items-center p-2 rounded-lg hover:bg-gray-800" type="submit">
-						<i class="fas fa-sign-out-alt mr-3"></i>
-						Logout
+					<button class="flex items-center w-full p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift" type="submit">
+						<i class="fas fa-sign-out-alt nav-icon"></i>
+						<span class="hidden lg:inline ml-3 text-sm">Logout</span>
 					</button>
 				</form>
 				{% endif %}
-
 			</div>
 		</div>
 
 		<!-- Main Content -->
 		<div class="content-transition flex-1 flex flex-col overflow-hidden">
-			<!-- Top Bar -->
-			<header class="bg-white shadow-sm z-10">
-				<div class="flex items-center justify-between p-4">
+			<!-- Elegant Header -->
+			<header class="glass-header z-10 elegant-shadow">
+				<div class="flex items-center justify-between p-4 lg:p-5">
 					<div class="flex items-center">
-						<button id="sidebarToggle" class="p-2 rounded-md text-gray-600 hover:bg-gray-100">
-							<i class="fas fa-bars"></i>
+						<button id="sidebarToggle" class="p-2 rounded-lg text-elegant-600 hover:bg-elegant-100 hover:text-elegant-800 transition-all duration-200">
+							<i class="fas fa-bars text-sm"></i>
 						</button>
-						<div class="ml-4 relative">
+						<div class="ml-3 lg:ml-4 relative">
 							<input type="text" placeholder="Search..."
-								class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64">
-							<i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+								class="pl-10 pr-4 py-2 rounded-xl border border-elegant-200 bg-white text-elegant-800 placeholder-elegant-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 w-48 lg:w-72 text-sm transition-all duration-200">
+							<i class="fas fa-search absolute left-3 top-2.5 text-elegant-400 text-sm"></i>
 						</div>
 					</div>
 
-					<div class="flex items-center space-x-4">
-						<button class="p-2 rounded-full hover:bg-gray-100 relative">
-							<i class="fas fa-bell text-gray-600"></i>
-							<span
-								class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">5</span>
+					<div class="flex items-center space-x-3 lg:space-x-4">
+						<button class="p-2 rounded-lg text-elegant-600 hover:bg-elegant-100 hover:text-elegant-800 transition-all duration-200 relative">
+							<i class="fas fa-bell text-sm"></i>
+							<span class="absolute -top-1 -right-1 bg-red-400 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center shadow">5</span>
 						</button>
-						<button class="p-2 rounded-full hover:bg-gray-100">
-							<i class="fas fa-cog text-gray-600"></i>
+						<button class="p-2 rounded-lg text-elegant-600 hover:bg-elegant-100 hover:text-elegant-800 transition-all duration-200">
+							<i class="fas fa-cog text-sm"></i>
 						</button>
-						<div
-							class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
+						<div class="h-8 w-8 rounded-full bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center text-white text-sm font-medium shadow-lg hover-lift">
 							JD
 						</div>
 					</div>
 				</div>
 			</header>
 
-			<!-- Page Content -->
-			<main class="flex-1 overflow-y-auto p-6 bg-gray-50">
-				<!-- Page Header -->
-
+			<!-- Elegant Content Area -->
+			<main class="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-elegant-50 to-elegant-100 slim-scrollbar">
 				{% block content %} {% endblock %}
 			</main>
 		</div>
@@ -204,13 +291,13 @@
 			const sidebar = document.querySelector('.sidebar-transition');
 			const content = document.querySelector('.content-transition');
 
-			if (sidebar.classList.contains('w-64')) {
-				sidebar.classList.remove('w-64');
+			if (sidebar.classList.contains('w-20')) {
+				sidebar.classList.remove('w-20');
 				sidebar.classList.add('w-0', 'overflow-hidden');
 				content.classList.add('lg:ml-0');
 			} else {
 				sidebar.classList.remove('w-0', 'overflow-hidden');
-				sidebar.classList.add('w-64');
+				sidebar.classList.add('w-20');
 				content.classList.remove('lg:ml-0');
 			}
 		});
@@ -226,5 +313,4 @@
 		});
 	</script>
 </body>
-
 </html>
