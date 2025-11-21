@@ -37,4 +37,7 @@ urlpatterns = [
     path("borrowed/all/", views.all_borrowed_books, name="borrowed_all"),
     path('api/check-book/<str:barcode>/', views.api_check_book_status, name='check-book-api'),
     
+    path('ads/', views.ads, name='ads'),
+    
+    
     ]

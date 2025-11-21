@@ -1,71 +1,88 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container mt-4">
+<div class="max-w-5xl mx-auto mt-8">
 
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0">{{ book.title }}</h2>
-        <a href="{% url 'book_list' %}" class="btn btn-outline-secondary btn-sm">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">{{ book.title }}</h2>
+
+        <a href="{% url 'book_list' %}"
+           class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm">
             ← Back to List
         </a>
     </div>
 
     <!-- Book Info Card -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
+    <div class="bg-white shadow rounded-lg mb-6">
+        <div class="bg-blue-600 text-white px-4 py-3 rounded-t-lg">
             <strong>Book Information</strong>
         </div>
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-6"><strong>Author:</strong> {{ book.author }}</div>
-                <div class="col-md-6"><strong>ISBN:</strong> {{ book.isbn }}</div>
-                <div class="col-md-6"><strong>Publisher:</strong> {{ book.publisher }}</div>
-                <div class="col-md-6"><strong>Year:</strong> {{ book.year }}</div>
+        <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <strong class="text-gray-700">Author:</strong>
+                <span class="ml-1 text-gray-900">{{ book.author }}</span>
+            </div>
+            <div>
+                <strong class="text-gray-700">ISBN:</strong>
+                <span class="ml-1 text-gray-900">{{ book.isbn }}</span>
+            </div>
+            <div>
+                <strong class="text-gray-700">Publisher:</strong>
+                <span class="ml-1 text-gray-900">{{ book.publisher }}</span>
+            </div>
+            <div>
+                <strong class="text-gray-700">Year:</strong>
+                <span class="ml-1 text-gray-900">{{ book.year }}</span>
             </div>
         </div>
     </div>
 
     <!-- Copies Section -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="fw-bold mb-0">Copies</h4>
-        <a href="{% url 'bookbarcode_create' book.pk %}" class="btn btn-primary btn-sm">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold text-gray-800">Copies</h3>
+
+        <a href="{% url 'bookbarcode_create' book.pk %}"
+           class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
             + Add Copy
         </a>
     </div>
 
     {% if book.barcodes.all %}
-    <div class="row g-3">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {% for barcode in book.barcodes.all %}
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div class="fw-bold">{{ barcode.barcode }}</div>
-                        <a href="{% url 'bookbarcode_delete' book.pk barcode.pk %}" 
-                           class="btn btn-sm btn-outline-danger">
-                            🗑️
-                        </a>
-                    </div>
-                    <small class="text-muted">Added: {{ barcode.created_at|date:"Y-m-d H:i" }}</small>
-                </div>
+        <div class="bg-white rounded-lg shadow p-4">
+            <div class="flex justify-between items-center mb-2">
+                <div class="font-semibold text-gray-800">{{ barcode.barcode }}</div>
+
+                <a href="{% url 'bookbarcode_delete' book.pk barcode.pk %}"
+                   class="px-2 py-1 text-red-600 border border-red-400 rounded hover:bg-red-50 text-sm">
+                    <i class="fas fa-trash"></i>
+                </a>
             </div>
+
+            <p class="text-gray-500 text-sm">
+                Added: {{ barcode.created_at|date:"Y-m-d H:i" }}
+            </p>
         </div>
         {% endfor %}
     </div>
     {% else %}
-    <div class="text-center text-muted py-4">
-        <i class="bi bi-box-seam fs-1"></i>
-        <p class="mb-0 mt-2">No copies added yet.</p>
+    <div class="text-center text-gray-500 py-8">
+        <i class="fas fa-box text-4xl text-gray-300"></i>
+        <p class="mt-2">No copies added yet.</p>
     </div>
     {% endif %}
 
     <!-- Action Buttons -->
-    <div class="d-flex gap-2 mt-4">
-        <a href="{% url 'book_update' book.pk %}" class="btn btn-warning">
+    <div class="flex gap-3 mt-8">
+        <a href="{% url 'book_update' book.pk %}"
+           class="px-5 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">
             ✏️ Edit
         </a>
-        <a href="{% url 'book_delete' book.pk %}" class="btn btn-danger">
+
+        <a href="{% url 'book_delete' book.pk %}"
+           class="px-5 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
             🗑️ Delete
         </a>
     </div>

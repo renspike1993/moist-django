@@ -9,7 +9,7 @@ SECRET_KEY = 'django-insecure-change-me-in-production'
 DEBUG = True
 
 # For development this is okay — in production specify domains
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*','192.168.10.116']
 
 
 # -------------------------------------------------------------------

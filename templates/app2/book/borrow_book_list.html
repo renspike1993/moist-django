@@ -4,78 +4,108 @@
 {% block content %}
 
 <!-- Header -->
-<div class="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
-    <i class="fas fa-book fa-3x me-3"></i>
-    <div class="lh-1">
-        <h1 class="h6 mb-0 text-white lh-1">Borrow Books</h1>
-        <small>- Borrower: {{ student.last_name }}, {{ student.first_name }}</small>
+<div class="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-5 rounded-lg shadow flex items-center gap-4">
+    <i class="fas fa-book text-4xl"></i>
+    <div>
+        <h1 class="text-xl font-semibold">Borrow Books</h1>
+        <p class="text-sm opacity-90">
+            Borrower: {{ student.last_name }}, {{ student.first_name }}
+        </p>
     </div>
 </div>
 
-<div class="my-3 p-3 bg-body rounded shadow-sm">
+<!-- Main Card -->
+<div class="bg-white p-6 rounded-lg shadow mt-6">
 
     <!-- Search -->
-    <form method="get" class="mb-3 d-flex">
-        <input type="text" name="q" class="form-control me-2" placeholder="Search book title, author, ISBN..."
-               value="{{ q }}">
-        <button class="btn btn-primary">Search</button>
+    <form method="get" class="flex gap-3 mb-5">
+        <input 
+            type="text" 
+            name="q"
+            placeholder="Search book title, author, ISBN..."
+            value="{{ q }}"
+            class="w-full border border-gray-300 px-4 py-2 rounded-md focus:ring focus:ring-blue-500/40 focus:border-blue-500"
+        >
+        <button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+            Search
+        </button>
     </form>
 
-    <div class="table-responsive mt-3">
-        <table class="table table-bordered table-striped align-middle">
-            <thead class="table-dark">
+    <!-- Table -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 border rounded-lg overflow-hidden">
+            <thead class="bg-gray-50">
                 <tr>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Year</th>
-                    <th>ISBN</th>
-                    <th>Barcode</th>
-                    <th width="200">Action</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Title</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Author</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Year</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">ISBN</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Barcode</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Action</th>
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody class="bg-white divide-y divide-gray-200">
+
                 {% for book in page_obj %}
+                    
                     {% if book.barcodes.all %}
                         {% for barcode in book.barcodes.all %}
                         <tr>
-                            <td>{{ book.title }}</td>
-                            <td>{{ book.author }}</td>
-                            <td>{{ book.publication_year }}</td>
-                            <td>{{ book.isbn }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-800">{{ book.title }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-800">{{ book.author }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-800">{{ book.publication_year }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-800">{{ book.isbn }}</td>
 
-                            <td>
-                                {{ barcode.barcode }}
+                            <!-- Barcode -->
+                            <td class="px-6 py-4 text-sm">
+                                <span class="font-medium">{{ barcode.barcode }}</span>
 
                                 {% if barcode.id in borrowed_barcodes %}
-                                    <span class="badge bg-danger ms-2">Borrowed</span>
+                                    <span class="ml-2 px-2 py-1 rounded-full text-xs bg-red-100 text-red-700">
+                                        Borrowed
+                                    </span>
                                 {% else %}
-                                    <span class="badge bg-success ms-2">Available</span>
+                                    <span class="ml-2 px-2 py-1 rounded-full text-xs bg-green-100 text-green-700">
+                                        Available
+                                    </span>
                                 {% endif %}
                             </td>
 
-                            <td>
+                            <!-- Action -->
+                            <td class="px-6 py-4">
                                 {% if barcode.id in borrowed_barcodes %}
-                                    <button class="btn btn-sm btn-secondary w-100" disabled>Borrowed</button>
+                                    <button 
+                                        class="w-full px-3 py-2 text-sm bg-gray-300 text-gray-600 rounded cursor-not-allowed">
+                                        Borrowed
+                                    </button>
                                 {% else %}
                                     <a href="{% url 'borrow_book' student.id book.id barcode.id %}"
-                                       class="btn btn-sm btn-primary w-100">Borrow</a>
+                                       class="w-full px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 block text-center">
+                                        Borrow
+                                    </a>
                                 {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
+                    
                     {% else %}
+                        <!-- No barcode row -->
                         <tr>
-                            <td>{{ book.title }}</td>
-                            <td>{{ book.author }}</td>
-                            <td>{{ book.publication_year }}</td>
-                            <td>{{ book.isbn }}</td>
-                            <td colspan="2" class="text-muted text-center">No barcodes available</td>
+                            <td class="px-6 py-4 text-sm text-gray-800">{{ book.title }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-800">{{ book.author }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-800">{{ book.publication_year }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-800">{{ book.isbn }}</td>
+
+                            <td colspan="2" class="px-6 py-4 text-center text-gray-400">
+                                No barcodes available
+                            </td>
                         </tr>
                     {% endif %}
+
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="text-center">No books found.</td>
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">No books found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -83,37 +113,61 @@
     </div>
 
     <!-- Pagination -->
-    <nav>
-        <ul class="pagination justify-content-center mt-3">
+    <div class="mt-6 flex justify-center">
+        <ul class="inline-flex items-center space-x-1">
+
+            <!-- Prev -->
             {% if page_obj.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q }}">Previous</a>
-                </li>
+            <li>
+                <a href="?page={{ page_obj.previous_page_number }}&q={{ q }}"
+                   class="px-3 py-2 border rounded hover:bg-gray-100">
+                    Previous
+                </a>
+            </li>
             {% else %}
-                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            <li>
+                <span class="px-3 py-2 border rounded text-gray-400 bg-gray-100 cursor-not-allowed">Previous</span>
+            </li>
             {% endif %}
 
+            <!-- Numbers -->
             {% for num in page_obj.paginator.page_range %}
                 {% if num == page_obj.number %}
-                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                <li>
+                    <span class="px-3 py-2 border rounded bg-blue-600 text-white">{{ num }}</span>
+                </li>
                 {% else %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}&q={{ q }}">{{ num }}</a>
-                    </li>
+                <li>
+                    <a href="?page={{ num }}&q={{ q }}" 
+                       class="px-3 py-2 border rounded hover:bg-gray-100">
+                        {{ num }}
+                    </a>
+                </li>
                 {% endif %}
             {% endfor %}
 
+            <!-- Next -->
             {% if page_obj.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q }}">Next</a>
-                </li>
+            <li>
+                <a href="?page={{ page_obj.next_page_number }}&q={{ q }}"
+                   class="px-3 py-2 border rounded hover:bg-gray-100">
+                    Next
+                </a>
+            </li>
             {% else %}
-                <li class="page-item disabled"><span class="page-link">Next</span></li>
+            <li>
+                <span class="px-3 py-2 border rounded text-gray-400 bg-gray-100 cursor-not-allowed">Next</span>
+            </li>
             {% endif %}
         </ul>
-    </nav>
+    </div>
 
-    <a href="{% url 'student_detail' student.id %}" class="btn btn-secondary mt-3">Back</a>
+    <!-- Back Button -->
+    <a href="{% url 'student_detail' student.id %}" 
+       class="mt-6 inline-block px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800">
+        Back
+    </a>
+
 </div>
 
 {% endblock %}
