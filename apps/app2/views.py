@@ -5,17 +5,61 @@ from datetime import timedelta
 from django.utils import timezone
 
 from apps.app1.models import Student
-from .models import Book,BorrowedBook,BookBarcode
-from .forms import BookForm
+from .models import Book,BorrowedBook,BookBarcode,Collection
+from .forms import BookForm,CollectionForm
 from django.contrib import messages
 from django.db.models import Prefetch
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
+from django.db.models import Q,Count
 from django.http import JsonResponse
 
 def ads(request):
     return render(request, 'app2/tv.html')
+
+
+
+
+
+
+
+
+
+
+@login_required
+def dashboard(request):
+    # Total counts
+    total_books = Book.objects.count()
+    total_barcodes = BookBarcode.objects.count()
+    total_collections = Collection.objects.count()
+    total_students = Student.objects.count()
+
+    # Borrowed stats
+    borrowed_count = BorrowedBook.objects.filter(status="borrowed").count()
+    returned_count = BorrowedBook.objects.filter(status="returned").count()
+    overdue_count = BorrowedBook.objects.filter(status="overdue").count()
+
+    # Recently added books
+    recent_books = Book.objects.order_by('-created_at')[:5]
+
+    # Recently borrowed books
+    recent_borrowed = BorrowedBook.objects.select_related('book', 'borrower', 'barcode').order_by('-date_borrowed')[:5]
+
+    context = {
+        'total_books': total_books,
+        'total_barcodes': total_barcodes,
+        'total_collections': total_collections,
+        'total_students': total_students,
+        'borrowed_count': borrowed_count,
+        'returned_count': returned_count,
+        'overdue_count': overdue_count,
+        'recent_books': recent_books,
+        'recent_borrowed': recent_borrowed,
+    }
+
+    return render(request, 'app2/dashboard.html', context)
+
+
 
 @login_required
 def index(request):
@@ -69,6 +113,8 @@ def book_update(request, pk):
         form = BookForm(instance=book)
     return render(request, 'app2/book/book_form.html', {'form': form})
 
+
+
 # Delete a book
 @login_required
 def book_delete(request, pk):
@@ -84,24 +130,29 @@ def borrow_book_list(request, student_id):
     student = get_object_or_404(Student, pk=student_id)
 
     # Search query
-    q = request.GET.get("q", "").strip()
+    q = request.GET.get("q", "").strip().upper()
 
-    # Base queryset
-    books = Book.objects.prefetch_related("barcodes").all()
+    # Step 1: Get all barcodes that are currently borrowed
+    borrowed_barcodes = BorrowedBook.objects.filter(status="borrowed").values_list("barcode_id", flat=True)
 
+    # Step 2: Get books with at least one available barcode
+    books = Book.objects.prefetch_related("barcodes").filter(
+        barcodes__id__isnull=False  # Make sure book has barcodes
+    ).exclude(
+        barcodes__id__in=borrowed_barcodes  # Exclude borrowed barcodes
+    ).distinct()
+
+    # Step 3: Filter by search query if provided
     if q:
-        q_normalized = q.strip().upper()
-        books = books.filter(
-            barcodes__barcode__iexact=q_normalized
-        ).distinct()
+        books = books.filter(barcodes__barcode__iexact=q).distinct()
 
     # Pagination
     paginator = Paginator(books, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    # Borrowed barcode IDs for this student
-    borrowed_barcodes = set(
+    # Prepare a set of borrowed barcodes for this student (optional, for UI purposes)
+    student_borrowed_barcodes = set(
         BorrowedBook.objects.filter(
             borrower=student,
             status="borrowed"
@@ -111,12 +162,48 @@ def borrow_book_list(request, student_id):
     context = {
         "student": student,
         "page_obj": page_obj,
-        "borrowed_barcodes": borrowed_barcodes,
+        "borrowed_barcodes": student_borrowed_barcodes,
         "q": q,
     }
     return render(request, "app2/book/borrow_book_list.html", context)
 
 
+@login_required
+def all_books_borrow_history(request):
+    status_filter = request.GET.get('status', '')  # 'borrowed', 'returned', 'overdue' or ''
+    search_query = request.GET.get('q', '').strip()
+
+    # Base queryset
+    borrow_records = BorrowedBook.objects.select_related(
+        'book', 'borrower', 'barcode'
+    ).order_by('-date_borrowed')
+
+    # Apply status filter if provided
+    if status_filter in ['borrowed', 'returned', 'overdue']:
+        borrow_records = borrow_records.filter(status=status_filter)
+
+    # Apply search filter if provided
+    if search_query:
+        borrow_records = borrow_records.filter(
+            Q(book__title__icontains=search_query) |
+            Q(book__author__icontains=search_query) |
+            Q(barcode__barcode__icontains=search_query) |
+            Q(borrower__first_name__icontains=search_query) |
+            Q(borrower__last_name__icontains=search_query)
+        )
+
+    # Pagination
+    paginator = Paginator(borrow_records, 10)  # 15 records per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'borrow_records': page_obj,
+        'status_filter': status_filter,
+        'q': search_query,
+        'page_obj': page_obj,
+    }
+    return render(request, 'app2/book/all_books_borrow_history.html', context)
 
 
 @login_required
@@ -135,6 +222,22 @@ def borrow_book(request, student_id, book_id, barcode_id):
 
     messages.success(request, f"{book.title} ({barcode.barcode}) borrowed successfully!")
     return redirect('borrow_book_list', student_id=student.id)
+
+
+@login_required
+def return_book(request, borrowed_id):
+    borrowed = get_object_or_404(BorrowedBook, pk=borrowed_id)
+
+    if borrowed.status == 'borrowed':
+        borrowed.status = 'returned'
+        borrowed.date_returned = timezone.now()
+        borrowed.save()
+        messages.success(request, f"{borrowed.book.title} has been returned successfully.")
+    else:
+        messages.warning(request, f"{borrowed.book.title} was already returned.")
+
+    # Redirect back to the previous page, fallback to home if not available
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 @login_required
 def bookbarcode_create(request, pk):
@@ -158,20 +261,6 @@ def bookbarcode_create(request, pk):
 
     return render(request, "app2/book/bookbarcode_form.html", {"book": book})
 
-
-@login_required
-def return_book(request, borrowed_id):
-    borrowed = get_object_or_404(BorrowedBook, pk=borrowed_id)
-
-    if borrowed.status == 'borrowed':
-        borrowed.status = 'returned'
-        borrowed.date_returned = timezone.now()
-        borrowed.save()
-        messages.success(request, f"{borrowed.book.title} has been returned successfully.")
-    else:
-        messages.warning(request, f"{borrowed.book.title} was already returned.")
-
-    return redirect('student_detail', pk=borrowed.borrower.id)
 
 
 @login_required
@@ -217,6 +306,8 @@ def all_borrowed_books(request):
     context = {"page_obj": page_obj, "q": q}
     return render(request, "app2/book/borrowed_all_list.html", context)
 
+
+
 @login_required
 def api_check_book_status(request, barcode):
     try:
@@ -246,3 +337,50 @@ def api_check_book_status(request, barcode):
     except BookBarcode.DoesNotExist:
         # Barcode does not exist
         return JsonResponse({"status": "not_found"})
+    
+
+# -------------------------------Collection------------------------------------------------
+
+# LIST COLLECTIONS WITH BOOK COUNT
+def collection_list(request):
+    collections = Collection.objects.annotate(
+        book_count=Count('books')  # 'books' is the related_name from Book.collection
+    ).order_by('-id')
+    
+    return render(request, 'app2/collection/collection_list.html', {'collections': collections})
+
+# CREATE COLLECTION
+def collection_create(request):
+    if request.method == 'POST':
+        form = CollectionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('collection_list')
+    else:
+        form = CollectionForm()
+    return render(request, 'app2/collection/collection_form.html', {'form': form})
+
+# UPDATE COLLECTION
+def collection_update(request, pk):
+    collection = get_object_or_404(Collection, pk=pk)
+    if request.method == 'POST':
+        form = CollectionForm(request.POST, instance=collection)
+        if form.is_valid():
+            form.save()
+            return redirect('collection_list')
+    else:
+        form = CollectionForm(instance=collection)
+    return render(request, 'app2/collection/collection_form.html', {'form': form})
+
+# DELETE COLLECTION
+def collection_delete(request, pk):
+    collection = get_object_or_404(Collection, pk=pk)
+    if request.method == 'POST':
+        collection.delete()
+        return redirect('collection_list')
+    return render(request, 'app2/collection/collection_confirm_delete.html', {'collection': collection})
+
+# VIEW COLLECTION DETAILS
+def collection_detail(request, pk):
+    collection = get_object_or_404(Collection, pk=pk)
+    return render(request, 'app2/collection/collection_detail.html', {'collection': collection})
