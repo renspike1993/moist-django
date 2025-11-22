@@ -1,53 +1,75 @@
-{% extends 'base.html' %} {% block title %}App 1{% endblock %} {% block content %}
-<div class="d-flex align-items-center p-3 my-3 text-white bg-purple rounded shadow-sm">
-    <i class="fas fa-lock fa-3x me-3"></i>
-    <div class="lh-1">
-        <h1 class="h6 mb-0 text-white lh-1 mb-2">System Integration</h1>
-        <small>Rene M. Cabuhan II</small>
+{% extends 'base.html' %}
+{% block title %}App 1{% endblock %}
+{% block content %}
+
+<!-- Header -->
+<div class="flex items-center p-4 my-6 text-white bg-indigo-600 rounded-xl shadow-md">
+    <i class="fas fa-lock text-4xl mr-4"></i>
+    <div>
+        <h1 class="text-xl font-bold mb-1">System Integration</h1>
+        <p class="text-sm opacity-80">Rene M. Cabuhan II</p>
     </div>
 </div>
 
-<div class="table-responsive">
-    <table class="table table-bordered table-striped align-middle">
-        <thead class="table-dark">
+<!-- Table Container -->
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 overflow-x-auto">
+
+    <table class="w-full border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden">
+        <thead class="bg-gray-900 text-white dark:bg-gray-700">
             <tr>
-                <th>System Name</th>
-                <th>Routes</th>
-                <th>Description</th>
-                <th width="180">Actions</th>
+                <th class="px-4 py-3 text-left">System Name</th>
+                <th class="px-4 py-3 text-left">Routes</th>
+                <th class="px-4 py-3 text-left">Description</th>
+                <th class="px-4 py-3 text-center w-40">Actions</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>Registrar</td>
-                <td>{% url 'registrar' %}</td>
-                <td>Student Files Management System</td>
-                <td>
-                    <a href="{% url 'registrar' %}" class="btn btn-sm text-white bg-purple">Go to site</a>
+
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/40">
+                <td class="px-4 py-3 font-medium">Registrar</td>
+                <td class="px-4 py-3 text-indigo-600">{{ request.build_absolute_uri|slice:":-1" }}{% url 'registrar' %}</td>
+                <td class="px-4 py-3">Student Files Management System</td>
+                <td class="px-4 py-3 text-center">
+                    <a href="{% url 'registrar' %}"
+                       class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm shadow">
+                        Go to site
+                    </a>
                 </td>
             </tr>
-            <tr>
-                <td>Library Management System</td>
-                <td>{% url 'library' %}</td>
-                <td>Books Management System</td>
-                <td>
-                    <a href="{% url 'library' %}" class="btn btn-sm text-white bg-purple">Go to site</a>
+
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/40">
+                <td class="px-4 py-3 font-medium">Library Management System</td>
+                <td class="px-4 py-3 text-indigo-600">{{ request.build_absolute_uri|slice:":-1" }}{% url 'library' %}</td>
+                <td class="px-4 py-3">Books Management System</td>
+                <td class="px-4 py-3 text-center">
+                    <a href="{% url 'library' %}"
+                       class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm shadow">
+                        Go to site
+                    </a>
                 </td>
             </tr>
-            <tr>
-                <td>Entrance Exam</td>
-                <td>{% url 'library' %}</td>
-                <td>Student Managements</td>
-                <td>
-                    <a href="{% url 'library' %}" class="btn btn-sm text-white bg-purple">Go to site</a>
+
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/40">
+                <td class="px-4 py-3 font-medium">Entrance Exam</td>
+                <td class="px-4 py-3 text-indigo-600">{% url 'library' %}</td>
+                <td class="px-4 py-3">Student Managements</td>
+                <td class="px-4 py-3 text-center">
+                    <a href="{% url 'library' %}"
+                       class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm shadow">
+                        Go to site
+                    </a>
                 </td>
             </tr>
-            <tr>
-                <td>Gates</td>
-                <td>{% url 'library' %}</td>
-                <td>Turnstyle Gates Managements</td>
-                <td>
-                    <a href="{% url 'library' %}" class="btn btn-sm text-white bg-purple">Go to site</a>
+
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/40">
+                <td class="px-4 py-3 font-medium">Gates</td>
+                <td class="px-4 py-3 text-indigo-600">{% url 'library' %}</td>
+                <td class="px-4 py-3">Turnstyle Gates Managements</td>
+                <td class="px-4 py-3 text-center">
+                    <a href="{% url 'library' %}"
+                       class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm shadow">
+                        Go to site
+                    </a>
                 </td>
             </tr>
         </tbody>
