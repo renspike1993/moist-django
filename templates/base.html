@@ -144,7 +144,7 @@
 
 					<ul class="space-y-1 px-3 text-sm">
 						<li>
-							<a href="#" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 text-gray-300 transition-all duration-200">
+							<a href="{% url 'opac' %}" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 text-gray-300 transition-all duration-200">
 								<i class="fa-solid fa-boxes text-xs w-4"></i>
 								<span class="hidden lg:block ml-3">OPAC</span>
 							</a>
@@ -162,6 +162,11 @@
 								<span class="hidden lg:block ml-3">Reports</span>
 							</a>
 						</li>
+						<li>
+							<a href="{% url 'manual' %}" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 text-gray-300 transition-all duration-200 {% if request.resolver_match.url_name == 'manual' %} bg-gray-700 text-white {% else %} text-gray-300 {% endif %}">
+								<i class="fa-solid fa-book-open text-xs w-4"></i>
+								<span class="hidden lg:block ml-3">User Manual</span>
+							</a>
 					</ul>
 				</nav>
 

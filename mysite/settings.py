@@ -116,6 +116,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']   # shared static
 STATIC_ROOT = BASE_DIR / 'staticfiles'     # for collectstatic (prod)
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # -------------------------------------------------------------------
 # Default PK field type

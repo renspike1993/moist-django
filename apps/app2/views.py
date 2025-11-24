@@ -13,17 +13,37 @@ from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q,Count
 from django.http import JsonResponse
-
+import json
 def ads(request):
     return render(request, 'app2/tv.html')
 
 
+def manual(request):
+    return render(request, 'app2/manual.html')
+
+
+def book_views(request):
+    return render(request, 'app2/view.html')
 
 
 
+@csrf_exempt   # optional if you use X-CSRFToken (safe to remove once stable)
+def api_reservations(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            print("📌 Received Reservation:", data)
 
+            return JsonResponse({
+                "status": "success",
+                "received": data
+            })
 
+        except Exception as e:
+            print("⚠ Error:", e)
+            return JsonResponse({"error": str(e)}, status=400)
 
+    return JsonResponse({"error": "POST only"}, status=405)
 
 
 @login_required
@@ -59,6 +79,24 @@ def dashboard(request):
 
     return render(request, 'app2/dashboard.html', context)
 
+@login_required
+def book_marc21_view(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    
+    # Prepare a list of (field name, value) to send to template
+    book_fields = []
+    for field in book._meta.fields:
+        book_fields.append((field.verbose_name, getattr(book, field.name)))
+    
+    return render(request, 'app2/marc-21-view.html', {
+        'book': book,
+        'book_fields': book_fields
+    })
+@login_required
+def book_isbd(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    return render(request, 'app2/book/book_isbd.html', {'book': book})
+
 
 
 @login_required
@@ -67,14 +105,26 @@ def index(request):
 
 @login_required
 def opac(request):
-    books_list = Book.objects.all()
-    paginator = Paginator(books_list, 10)  # 10 books per page
+    query = request.GET.get('q', '').strip()  # Get the search query
 
+    books_list = Book.objects.all()
+
+    if query:
+        books_list = books_list.filter(
+            Q(title__icontains=query) |
+            Q(author__icontains=query) |
+            Q(subjects__icontains=query)
+        )
+
+    paginator = Paginator(books_list, 10)  # 10 books per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'app2/opac.html', {'books': page_obj, 'page_obj': page_obj})
-
+    return render(request, 'app2/opac.html', {
+        'books': page_obj,
+        'page_obj': page_obj,
+        'search_query': query  # pass the query back to the template
+    })
 
 # List all books
 @login_required
@@ -86,33 +136,69 @@ def book_list(request):
 @login_required
 def book_detail(request, pk):
     book = get_object_or_404(Book, pk=pk)
-    return render(request, "app2/book/book_detail.html", {"book": book})
+    
+    # Fetch copies with status
+    barcodes = book.barcodes.all().select_related(None)
 
-# Create a new book
+    barcode_data = []
+
+    for bc in barcodes:
+        # Check if this copy is borrowed and not returned
+        borrowed_record = BorrowedBook.objects.filter(
+            barcode=bc, status="borrowed"
+        ).select_related("borrower").first()
+
+        if borrowed_record:
+            status = "Borrowed"
+            borrower = borrowed_record.borrower
+        else:
+            status = "Available"
+            borrower = None
+
+        barcode_data.append({
+            "barcode": bc,
+            "status": status,
+            "borrower": borrower,
+            "borrowed_record": borrowed_record,
+        })
+
+    context = {
+        "book": book,
+        "barcode_data": barcode_data,
+    }
+
+    return render(request, "app2/book/book_detail.html", context)
+
+
 @login_required
 def book_create(request):
     if request.method == "POST":
-        form = BookForm(request.POST)
+        form = BookForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            messages.success(request, "Book has been successfully added!")  # <-- success message
             return redirect('book_list')
+        else:
+            messages.error(request, "Please correct the errors below.")  # <-- optional error message
     else:
         form = BookForm()
     return render(request, 'app2/book/book_form.html', {'form': form})
 
-# Update an existing book
+
 @login_required
 def book_update(request, pk):
     book = get_object_or_404(Book, pk=pk)
     if request.method == "POST":
-        form = BookForm(request.POST, instance=book)
+        form = BookForm(request.POST, request.FILES, instance=book)  # <-- add request.FILES
         if form.is_valid():
             form.save()
+            messages.success(request, "Book has been successfully updated!")  # <-- success message
             return redirect('book_list')
+        else:
+            messages.error(request, "Please correct the errors below.")  # <-- optional error message
     else:
         form = BookForm(instance=book)
     return render(request, 'app2/book/book_form.html', {'form': form})
-
 
 
 # Delete a book

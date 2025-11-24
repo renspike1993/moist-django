@@ -46,5 +46,12 @@ urlpatterns = [
     path('collections/<int:pk>/', views.collection_detail, name='collection_detail'),
     path('collections/<int:pk>/update/', views.collection_update, name='collection_update'),
     path('collections/<int:pk>/delete/', views.collection_delete, name='collection_delete'),
-    
+
+    path('manual/', views.manual, name='manual'),
+    path('book/views', views.book_views, name='book_views'),
+
+    path("api/reservations/", views.api_reservations, name="api_reservations"),
+    path('book/<int:pk>/marc21/', views.book_marc21_view, name='book_marc21'),
+    path('book/<int:pk>/isbd/', views.book_isbd, name='book_isbd'),
+
     ]

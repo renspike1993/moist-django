@@ -2,7 +2,6 @@
 from django import forms
 from .models import Book,Collection
 
-
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
@@ -92,7 +91,11 @@ class BookForm(forms.ModelForm):
                 'class': 'w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500',
                 'placeholder': 'Language'
             }),
+            'cover': forms.ClearableFileInput(attrs={
+                'class': 'w-full text-sm text-gray-700 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500'
+            }),
         }
+
 
         
 class CollectionForm(forms.ModelForm):
