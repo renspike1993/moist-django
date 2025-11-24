@@ -14,12 +14,11 @@ urlpatterns = [
     # Django Admin
     path('admin/', admin.site.urls),
 
-    path("login/", auth_views.LoginView.as_view(
-        template_name="auth/login.html",
-        authentication_form=LoginForm
-    ), name="login"),
-
-
+    # Authentication
+    path('login/', auth_views.LoginView.as_view(
+        template_name='auth/login.html'
+    ), name='login'),
+    
     path('logout/', auth_views.LogoutView.as_view(
         template_name='auth/login.html'
     ), name='logout'),
