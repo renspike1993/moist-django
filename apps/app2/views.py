@@ -92,39 +92,136 @@ def book_marc21_view(request, pk):
         'book': book,
         'book_fields': book_fields
     })
+
 @login_required
 def book_isbd(request, pk):
     book = get_object_or_404(Book, pk=pk)
-    return render(request, 'app2/book/book_isbd.html', {'book': book})
 
+    # Construct ISBD string
+    isbd_parts = []
+
+    # Title / statement of responsibility
+    title_part = book.title
+    if book.subtitle:
+        title_part += f" : {book.subtitle}"
+    if book.statement_of_responsibility:
+        title_part += f" / {book.statement_of_responsibility}"
+    isbd_parts.append(title_part)
+
+    # Author
+    if book.author:
+        isbd_parts.append(f"{book.author}")
+
+    # Edition
+    if book.edition:
+        isbd_parts.append(f"{book.edition} edition")
+
+    # Publication
+    pub_parts = []
+    if book.publication_place:
+        pub_parts.append(book.publication_place)
+    if book.publisher:
+        pub_parts.append(book.publisher)
+    if book.publication_year:
+        pub_parts.append(book.publication_year)
+    if pub_parts:
+        isbd_parts.append(" : ".join(pub_parts))
+
+    # Pagination / illustrations / dimensions
+    page_parts = []
+    if book.pages:
+        page_parts.append(f"{book.pages} p.")
+    if book.illustrations:
+        page_parts.append(f"{book.illustrations}")
+    if book.dimensions:
+        page_parts.append(f"{book.dimensions}")
+    if page_parts:
+        isbd_parts.append(" ; ".join(page_parts))
+
+    # Series
+    if book.series:
+        isbd_parts.append(f"Series: {book.series}")
+
+    # Notes
+    if book.notes:
+        isbd_parts.append(f"Notes: {book.notes}")
+
+    # Subjects
+    if book.subjects:
+        isbd_parts.append(f"Subjects: {book.subjects}")
+
+    # Classification
+    if book.classification:
+        isbd_parts.append(f"Classification: {book.classification}")
+
+    # Language
+    if book.language:
+        isbd_parts.append(f"Language: {book.language}")
+
+    # Combine into single ISBD string with line breaks
+    isbd_string = "\n".join(isbd_parts)
+
+    context = {
+        'book': book,
+        'book_isbd': isbd_string,
+    }
+
+    return render(request, 'app2/book/book_isbd.html', context)
 
 
 @login_required
 def index(request):
     return render(request, 'app2/index.html')
 
+from django.utils.html import escape
+import re
+
 @login_required
 def opac(request):
-    query = request.GET.get('q', '').strip()  # Get the search query
-
+    query = request.GET.get('q', '').strip()
     books_list = Book.objects.all()
 
     if query:
-        books_list = books_list.filter(
-            Q(title__icontains=query) |
-            Q(author__icontains=query) |
-            Q(subjects__icontains=query)
-        )
+        # Split the query into words
+        terms = query.split()
 
-    paginator = Paginator(books_list, 10)  # 10 books per page
+        # Filter books normally
+        for term in terms:
+            books_list = books_list.filter(
+                Q(title__icontains=term) |
+                Q(author__icontains=term) |
+                Q(subjects__icontains=term) |
+                Q(summary__icontains=term) |
+                Q(barcodes__barcode__icontains=term)
+            ).distinct()
+
+        # Highlight matched terms in each book (case-insensitive)
+        highlighted_books = []
+        for book in books_list:
+            book.title = escape(book.title)
+            book.author = escape(book.author)
+            book.summary = escape(book.summary or "")
+
+            for term in terms:
+                pattern = re.compile(re.escape(term), re.IGNORECASE)
+                highlight_term = r'<span style="background-color: yellow;">\g<0></span>'
+                book.title = pattern.sub(highlight_term, book.title)
+                book.author = pattern.sub(highlight_term, book.author)
+                book.summary = pattern.sub(highlight_term, book.summary)
+
+            highlighted_books.append(book)
+        books_list = highlighted_books
+
+    paginator = Paginator(books_list, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     return render(request, 'app2/opac.html', {
         'books': page_obj,
         'page_obj': page_obj,
-        'search_query': query  # pass the query back to the template
+        'search_query': query
     })
+
 
 # List all books
 @login_required
@@ -470,3 +567,39 @@ def collection_delete(request, pk):
 def collection_detail(request, pk):
     collection = get_object_or_404(Collection, pk=pk)
     return render(request, 'app2/collection/collection_detail.html', {'collection': collection})
+
+import random
+from faker import Faker
+
+from django.http import HttpResponse
+
+
+@login_required
+def generate_fake_books_view(request):
+    n = request.GET.get('n', 10)  # default to 10 books
+    try:
+        n = int(n)
+    except ValueError:
+        return HttpResponse("Invalid number of books", status=400)
+
+    fake = Faker()
+
+    for _ in range(n):
+        title = fake.sentence(nb_words=4)
+        author = fake.name()
+        publication_year = str(random.randint(1950, 2023))
+        isbn = fake.isbn13(separator="-")
+        summary = fake.paragraph(nb_sentences=3)
+        # Generate a unique control number
+        control_number = fake.unique.random_number(digits=8, fix_len=True)
+
+        Book.objects.create(
+            control_number=control_number,
+            title=title,
+            author=author,
+            publication_year=publication_year,
+            isbn=isbn,
+            summary=summary
+        )
+
+    return HttpResponse(f"Created {n} fake books successfully!")

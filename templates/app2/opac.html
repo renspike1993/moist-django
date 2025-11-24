@@ -859,10 +859,15 @@
 					</div>
 					<div class="search-bar">
 						<form method="get" action="{% url 'opac' %}">
-							<input type="text" name="q" value="{{ search_query }}" placeholder="Search for books, authors, or topics..." class="form-control" />
+							<input type="text" name="q" value="{{ search_query }}" placeholder="Scan Book or Enter books, authors, or topics to search..." class="form-control" />
 						</form>
 					</div>
+
 					<div class="user-actions">
+						{% if request.user.is_superuser %}
+						<a href="{% url 'dashboard' %}" class="btn btn-secondary flex items-center gap-1"> <i class="fas fa-arrow-left"></i> Back </a>
+						{% endif %}
+
 						<div class="cart-icon">
 							<i class="fas fa-shopping-cart fa-lg"></i>
 							<span class="cart-count">0</span>
@@ -896,21 +901,6 @@
 					<div class="section-header">
 						<h2>Featured Books</h2>
 						<div class="filter-options">
-							<select>
-								<option>All Categories</option>
-								<option>Fiction</option>
-								<option>Science</option>
-								<option>History</option>
-								<option>Biography</option>
-							</select>
-							<select>
-								<option value="" disabled selected>Sort by</option>
-								<option>Sort by: Top 10 Dean's Listers Choice</option>
-								<option>Sort by: Top 10 most searched books</option>
-								<option>Sort by: Top 10 most searched Authors</option>
-								<option>Sort by: Top 10 most searched Gategory</option>
-							</select>
-
 							<div class="pagination">
 								<span class="step-links">
 									{% if page_obj.has_previous %}
@@ -933,8 +923,8 @@
 						{% for book in books %}
 						<div class="book-media">
 							<div class="book-cover library-avatar-book">
-								{% if book.cover_image.url %}
-								<img src="{{ book.cover_image.url }}" width="100%" />
+								{% if book.cover_image %}
+								<img src="{{ book.cover_image.url }}" width="100%" alt="{{ book.title }}" />
 								{% else %}
 								<span class="text-muted">No Image</span>
 								{% endif %}
@@ -942,8 +932,8 @@
 							<div class="book-details">
 								<div class="book-header">
 									<div>
-										<div class="book-title">{{ book.title }}</div>
-										<div class="book-author">{{ book.author }}</div>
+										<div class="book-title">{{ book.title|safe }}</div>
+										<div class="book-author">{{ book.author|safe }}</div>
 										<div id="book_rfid" style="display: none">{{ book.rfid }}</div>
 									</div>
 									<div class="availability {% if book.copies|default:0 == 0 %}unavailable{% endif %}">
@@ -951,7 +941,7 @@
 										<span>{% if book.copies|default:0 != 0 %}Available{% else %}Unavailable{% endif %}</span>
 									</div>
 								</div>
-								<div class="book-description">{{ book.summary }}</div>
+								<div class="book-description">{{ book.summary|safe }}</div>
 								<div class="book-meta">
 									<div class="meta-item"><i class="fas fa-book"></i> <span>{{ book.category }}</span></div>
 									<div class="meta-item"><i class="fas fa-calendar-alt"></i> <span>{{ book.year }}</span></div>

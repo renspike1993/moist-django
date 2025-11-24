@@ -926,10 +926,10 @@
 
 		<!-- Main Content -->
 		<!-- Main Content -->
-		<div class="container">
-			<div class="main-content">
-				<!-- Catalog + Book Details Section -->
-				<div class="catalog-section">
+		<div class="container my-6">
+			<div class="main-content flex flex-col lg:flex-row gap-8">
+				<!-- Book Details & MARC-21/ISBD Section -->
+				<div class="flex-1">
 					<!-- Book Card -->
 					<div class="book-list mb-6">
 						<div class="book-media">
@@ -953,7 +953,7 @@
 
 								<div class="book-description">{{ book.summary|default:"No description available." }}</div>
 
-								<div class="book-meta">
+								<div class="book-meta flex flex-wrap gap-4">
 									{% if book.subjects %}
 									<div class="meta-item"><i class="fas fa-book"></i> <span>{{ book.subjects }}</span></div>
 									{% endif %} {% if book.publication_year %}
@@ -963,7 +963,7 @@
 									{% endif %}
 								</div>
 
-								<div class="book-actions">
+								<div class="book-actions mt-4">
 									<button class="btn btn-secondary" onclick="history.back();"><i class="fas fa-arrow-left"></i> Back to Catalog</button>
 								</div>
 							</div>
@@ -971,11 +971,11 @@
 					</div>
 
 					<!-- MARC-21 Table -->
-					<div class="catalog-info-section">
-						<div class="catalog-info-header">
-							<h3>MARC-21 Data</h3>
+					<div class="catalog-info-section mt-6">
+						<div class="catalog-info-header mb-2">
+							<h3>MARC-21 View</h3>
 						</div>
-						<div class="catalog-info">
+						<div class="catalog-info p-4 bg-gray-100 rounded shadow">
 							{% if book_fields %}
 							<table class="w-full text-sm font-mono">
 								<tbody>
@@ -992,22 +992,23 @@
 							{% endif %}
 						</div>
 					</div>
+
 				</div>
 
-				<!-- Cart Sidebar -->
-				<div class="cart-sidebar">
+				<!-- Related Books Sidebar -->
+				<aside class="cart-sidebar w-full lg:w-80 sticky top-20">
 					<h2>Related Books</h2>
 					<div class="cart-items" id="cart-items-container">
-						<!-- Cart items will be dynamically added here -->
+						<!-- Dynamic related books go here -->
 					</div>
 
-					<div class="cart-total">
+					<div class="cart-total mt-4">
 						<span>Total Items:</span>
 						<span id="cart-total-count">0</span>
 					</div>
 
-					<button class="checkout-btn" id="checkout-button">Reserve</button>
-				</div>
+					<button class="checkout-btn mt-3 w-full" id="checkout-button">Reserve</button>
+				</aside>
 			</div>
 		</div>
 

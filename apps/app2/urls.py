@@ -53,5 +53,6 @@ urlpatterns = [
     path("api/reservations/", views.api_reservations, name="api_reservations"),
     path('book/<int:pk>/marc21/', views.book_marc21_view, name='book_marc21'),
     path('book/<int:pk>/isbd/', views.book_isbd, name='book_isbd'),
+    path('faker-book/', views.generate_fake_books_view, name='generate_fake_books'),
 
     ]
