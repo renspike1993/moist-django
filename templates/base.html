@@ -88,8 +88,8 @@
 				<div class="px-4 py-4 border-b border-gray-700 flex items-center space-x-3">
 					<div class="h-8 w-8 rounded-full bg-gradient-to-r from-accent-500 to-purple-600 text-white flex items-center justify-center text-xs shadow-md">RC</div>
 					<div class="hidden lg:block">
-						<p class="text-xs font-medium text-white">Rene M. Cabuhan II</p>
-						<p class="text-[11px] text-gray-400">Admin</p>
+						<p class="text-xs font-medium text-white">{{ request.user.get_full_name|default:request.user.username }}</p>
+						<p class="text-[11px] text-gray-400">{{ request.user.role|default:"Super Admin" }}</p>
 					</div>
 				</div>
 
@@ -167,6 +167,7 @@
 								<i class="fa-solid fa-book-open text-xs w-4"></i>
 								<span class="hidden lg:block ml-3">User Manual</span>
 							</a>
+						</li>
 					</ul>
 				</nav>
 

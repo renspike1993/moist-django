@@ -4,19 +4,22 @@ from django.contrib.auth import views as auth_views
 from django.shortcuts import render
 from django.conf import settings
 from django.conf.urls.static import static
+from .forms import LoginForm
 
 def home(request):
     return render(request, 'home.html')
+
 
 urlpatterns = [
     # Django Admin
     path('admin/', admin.site.urls),
 
-    # Authentication
-    path('login/', auth_views.LoginView.as_view(
-        template_name='auth/login.html'
-    ), name='login'),
-    
+    path("login/", auth_views.LoginView.as_view(
+        template_name="auth/login.html",
+        authentication_form=LoginForm
+    ), name="login"),
+
+
     path('logout/', auth_views.LogoutView.as_view(
         template_name='auth/login.html'
     ), name='logout'),
