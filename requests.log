@@ -29,3 +29,10 @@
 [2025-11-25 05:25:26,770] INFO GET /registrar/students/4/edit/ User=coldblue IP=127.0.0.1 Status=200
 [2025-11-25 05:25:29,204] INFO POST /registrar/students/4/edit/ User=coldblue IP=127.0.0.1 Status=302
 [2025-11-25 05:25:29,218] INFO GET /registrar/students/ User=coldblue IP=127.0.0.1 Status=200
+[2025-11-25 05:57:08,500] INFO GET /library/manual/ User=coldblue IP=127.0.0.1 Status=200
+[2025-11-25 06:00:34,271] INFO GET /library/opac/ User=coldblue IP=127.0.0.1 Status=200
+[2025-11-25 06:00:34,304] INFO GET /media/book_covers/images_yID3FMt.jpg User=coldblue IP=127.0.0.1 Status=304
+[2025-11-25 06:00:34,304] INFO GET /media/book_covers/images_LAE1iWY.jpg User=coldblue IP=127.0.0.1 Status=304
+[2025-11-25 06:00:34,309] INFO GET /media/book_covers/images_UGsApMu.jpg User=coldblue IP=127.0.0.1 Status=304
+[2025-11-25 06:00:35,735] INFO GET /library/manual/ User=coldblue IP=127.0.0.1 Status=200
+[2025-11-25 06:00:37,262] INFO GET /favicon.ico User=coldblue IP=127.0.0.1 Status=404
