@@ -9,7 +9,7 @@ SECRET_KEY = 'django-insecure-change-me-in-production'
 DEBUG = True
 
 # For development this is okay — in production specify domains
-ALLOWED_HOSTS = ['*','192.168.10.116']
+ALLOWED_HOSTS = ['*','192.168.10.116','moist-django.onrender.com']
 
 
 # -------------------------------------------------------------------
@@ -115,14 +115,18 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # -------------------------------------------------------------------
 # Database (SQLite default)
 # -------------------------------------------------------------------
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(default='sqlite:///db.sqlite3', conn_max_age=600)
 }
-
-
 # -------------------------------------------------------------------
 # Authentication Redirects
 # -------------------------------------------------------------------
@@ -156,6 +160,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'     # for collectstatic (prod)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # -------------------------------------------------------------------
 # Default PK field type
