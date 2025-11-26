@@ -1,7 +1,9 @@
 from django.urls import path
 
-from . import views
+# from . import views
 from apps.app1 import views as student_list
+from apps.app2.views import all as views
+from apps.app2.views import transaction
 
 urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
@@ -54,5 +56,11 @@ urlpatterns = [
     path('book/<int:pk>/marc21/', views.book_marc21_view, name='book_marc21'),
     path('book/<int:pk>/isbd/', views.book_isbd, name='book_isbd'),
     path('faker-book/', views.generate_fake_books_view, name='generate_fake_books'),
+
+    path("transactions/", transaction.transaction_list, name="transaction_list"),
+    path("transactions/add/", transaction.transaction_create, name="transaction_create"),
+    path("transactions/<int:pk>/edit/", transaction.transaction_update, name="transaction_update"),
+    path("transactions/<int:pk>/delete/", transaction.transaction_delete, name="transaction_delete"),
+    path("transactions/borrower/<int:borrower_id>/", transaction.borrower_transactions, name="borrower_transactions"),
 
     ]

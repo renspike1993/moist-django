@@ -1,6 +1,6 @@
 # apps.app3/forms.py
 from django import forms
-from .models import Book,Collection
+from .models import Book,Collection,Transaction
 
 class BookForm(forms.ModelForm):
     class Meta:
@@ -113,3 +113,10 @@ class CollectionForm(forms.ModelForm):
                 'rows': 3
             }),
         }
+
+
+
+class TransactionForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = "__all__"

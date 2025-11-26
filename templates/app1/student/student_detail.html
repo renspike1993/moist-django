@@ -36,63 +36,45 @@
 		<div class="flex flex-wrap gap-2.5">
 			<a href="{% url 'student_list' %}" class="px-3 py-1.5 bg-gray-500 text-white rounded hover:bg-gray-600 text-xs flex items-center"> <i class="fas fa-arrow-left mr-1.5 text-xs"></i> Back </a>
 
-            {% if user|in_group_or_superuser:"library" %}
-			<a href="{% url 'borrow_book_list' student.id %}" class="px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs flex items-center"> <i class="fas fa-book-reader mr-1.5 text-xs"></i> Borrow Books </a>
-			{% endif %}
-
 			<a href="{% url 'student_update' student.id %}" class="px-3 py-1.5 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs flex items-center"> <i class="fas fa-edit mr-1.5 text-xs"></i> Edit </a>
 
 			<a href="{% url 'student_delete' student.id %}" class="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-xs flex items-center"> <i class="fas fa-trash mr-1.5 text-xs"></i> Delete </a>
-
 		</div>
 	</div>
 
-	<!-- Borrowed Books -->
-	<h2 class="text-base font-semibold text-gray-700 mb-2.5">Borrowed Books</h2>
 
-	{% if borrowed_books %}
+	<h2 class="text-base font-semibold text-gray-700 mt-6 mb-2.5">Full Transaction History</h2>
+
+	{% if transactions %}
 	<div class="overflow-x-auto">
 		<table class="min-w-full divide-y divide-gray-300 text-sm">
 			<thead class="bg-gray-100">
 				<tr>
-					<th class="px-3 py-2 text-left font-semibold text-gray-700 uppercase text-[10px]">Book</th>
-					<th class="px-3 py-2 text-left font-semibold text-gray-700 uppercase text-[10px]">Barcode</th>
-					<th class="px-3 py-2 text-left font-semibold text-gray-700 uppercase text-[10px]">Borrowed</th>
-					<th class="px-3 py-2 text-left font-semibold text-gray-700 uppercase text-[10px]">Due</th>
-					<th class="px-3 py-2 text-left font-semibold text-gray-700 uppercase text-[10px]">Status</th>
-					<th class="px-3 py-2 text-left font-semibold text-gray-700 uppercase text-[10px]">Action</th>
+					<th class="px-3 py-2 text-left text-[10px] font-semibold">Book</th>
+					<th class="px-3 py-2 text-left text-[10px] font-semibold">Reserved</th>
+					<th class="px-3 py-2 text-left text-[10px] font-semibold">Borrowed</th>
+					<th class="px-3 py-2 text-left text-[10px] font-semibold">Due</th>
+					<th class="px-3 py-2 text-left text-[10px] font-semibold">Returned</th>
+					<th class="px-3 py-2 text-left text-[10px] font-semibold">Status</th>
 				</tr>
 			</thead>
 
 			<tbody class="divide-y divide-gray-200 bg-white">
-				{% for b in borrowed_books %}
+				{% for t in transactions %}
 				<tr>
-					<td class="px-3 py-2">{{ b.book.title }}</td>
+					<td class="px-3 py-2">{{ t.book.title }}{{ t.book.barcode }}</td>
+					<td class="px-3 py-2">{{ t.date_reserve|date:"Y-m-d" }}</td>
+					<td class="px-3 py-2">{{ t.date_borrowed|date:"Y-m-d H:i" }}</td>
+					<td class="px-3 py-2">{{ t.due_date|date:"Y-m-d" }}</td>
+					<td class="px-3 py-2">{% if t.date_returned %} {{ t.date_returned|date:"Y-m-d" }} {% else %} - {% endif %}</td>
 
 					<td class="px-3 py-2">
-						{% if b.barcode %}
-						<span class="font-medium">{{ b.barcode.barcode }}</span>
+						{% if t.status == "borrowed" %}
+						<span class="px-2 py-0.5 bg-yellow-300 text-yellow-800 rounded text-[10px] font-semibold">Borrowed</span>
+						{% elif t.status == "returned" %}
+						<span class="px-2 py-0.5 bg-green-600 text-white rounded text-[10px] font-semibold">Returned</span>
 						{% else %}
-						<span class="text-gray-400 text-xs">N/A</span>
-						{% endif %}
-					</td>
-
-					<td class="px-3 py-2">{{ b.date_borrowed|date:"Y-m-d H:i" }}</td>
-					<td class="px-3 py-2">{{ b.due_date|date:"Y-m-d" }}</td>
-
-					<td class="px-3 py-2">
-						{% if b.status == "borrowed" %}
-						<span class="px-2 py-0.5 bg-yellow-300 text-yellow-800 rounded text-[10px] font-semibold"> Borrowed </span>
-						{% else %}
-						<span class="px-2 py-0.5 bg-green-500 text-white rounded text-[10px] font-semibold"> Returned </span>
-						{% endif %}
-					</td>
-
-					<td class="px-3 py-2">
-						{% if b.status == 'borrowed' %}
-						<a href="{% url 'return_book' b.id %}" class="px-2 py-0.5 bg-green-600 text-white rounded hover:bg-green-700 text-[10px]"> Return </a>
-						{% else %}
-						<span class="text-gray-400 text-[10px]">Returned</span>
+						<span class="px-2 py-0.5 bg-gray-300 text-gray-700 rounded text-[10px] font-semibold">{{ t.status }}</span>
 						{% endif %}
 					</td>
 				</tr>
@@ -100,9 +82,6 @@
 			</tbody>
 		</table>
 	</div>
-
-	{% else %}
-	<p class="text-gray-500 text-sm">No borrowed books.</p>
 	{% endif %}
 </div>
 

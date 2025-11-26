@@ -105,7 +105,7 @@
 						</li>
 
 						<li>
-							<a href="{% url 'all_books_borrow_history' %}" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 transition-all duration-200 {% if request.resolver_match.url_name == 'transactions' %} bg-gray-700 text-white {% else %} text-gray-300 {% endif %}">
+							<a href="{% url 'transaction_list' %}" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 transition-all duration-200 {% if request.resolver_match.url_name == 'transaction_list' %} bg-gray-700 text-white {% else %} text-gray-300 {% endif %}">
 								<i class="fa-solid fa-arrow-right-arrow-left text-xs w-4"></i>
 								<span class="hidden lg:block ml-3">Transactions</span>
 							</a>

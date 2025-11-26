@@ -5,8 +5,8 @@ from datetime import timedelta
 from django.utils import timezone
 
 from apps.app1.models import Student
-from .models import Book,BorrowedBook,BookBarcode,Collection
-from .forms import BookForm,CollectionForm
+from ..models import Book,BorrowedBook,BookBarcode,Collection
+from ..forms import BookForm,CollectionForm
 from django.contrib import messages
 from django.db.models import Prefetch
 from django.core.paginator import Paginator
@@ -14,6 +14,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q,Count
 from django.http import JsonResponse
 import json
+
+
+
+
 def ads(request):
     return render(request, 'app2/tv.html')
 
