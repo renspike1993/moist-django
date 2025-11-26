@@ -31,16 +31,79 @@ def book_views(request):
 
 
 
-@csrf_exempt   # optional if you use X-CSRFToken (safe to remove once stable)
+# @csrf_exempt   # optional if you use X-CSRFToken (safe to remove once stable)
+# def api_reservations(request):
+#     if request.method == "POST":
+#         try:
+#             data = json.loads(request.body.decode("utf-8"))
+#             print("📌 Received Reservation:", data)
+
+#             return JsonResponse({
+#                 "status": "success",
+#                 "received": data
+#             })
+
+#         except Exception as e:
+#             print("⚠ Error:", e)
+#             return JsonResponse({"error": str(e)}, status=400)
+
+#     return JsonResponse({"error": "POST only"}, status=405)
+
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from ..models import Transaction, Book, Student
+import json
+from django.utils.dateparse import parse_datetime
+
+@csrf_exempt
 def api_reservations(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body.decode("utf-8"))
             print("📌 Received Reservation:", data)
 
+            user_id = data.get("userId")
+            books = data.get("books", [])
+            reservation_date_str = data.get("reservationDate")
+
+            if not user_id or not books:
+                return JsonResponse({"error": "Missing userId or books"}, status=400)
+
+            # Ensure borrower exists
+            try:
+                borrower = Student.objects.get(id=user_id)
+            except Student.DoesNotExist:
+                return JsonResponse({"error": "Borrower not found"}, status=404)
+
+            # Ensure all books exist first
+            book_objects = []
+            for book_data in books:
+                book_id = book_data.get("id")
+                if not book_id:
+                    return JsonResponse({"error": f"Book id missing in {book_data}"}, status=400)
+                try:
+                    book_obj = Book.objects.get(id=book_id)
+                    book_objects.append(book_obj)
+                except Book.DoesNotExist:
+                    return JsonResponse({"error": f"Book id {book_id} not found"}, status=404)
+
+            reservation_date = parse_datetime(reservation_date_str) if reservation_date_str else None
+            created_transactions = []
+
+            # Create transactions only if all books exist
+            for book in book_objects:
+                transaction = Transaction.objects.create(
+                    book=book,
+                    borrower=borrower,
+                    date_reserve=reservation_date,
+                    status="reserved"
+                )
+                created_transactions.append(transaction.id)
+
             return JsonResponse({
                 "status": "success",
-                "received": data
+                "created_transactions": created_transactions
             })
 
         except Exception as e:
@@ -48,6 +111,7 @@ def api_reservations(request):
             return JsonResponse({"error": str(e)}, status=400)
 
     return JsonResponse({"error": "POST only"}, status=405)
+
 
 
 @login_required
