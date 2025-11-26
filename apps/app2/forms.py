@@ -1,6 +1,6 @@
 # apps.app3/forms.py
 from django import forms
-from .models import Book,Collection,Transaction
+from .models import Book,Collection,Transaction,BookBarcode
 
 class BookForm(forms.ModelForm):
     class Meta:
@@ -115,8 +115,16 @@ class CollectionForm(forms.ModelForm):
         }
 
 
-
 class TransactionForm(forms.ModelForm):
+    # Override barcode field
+    barcode = forms.ModelChoiceField(
+        queryset=BookBarcode.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={
+            'class': 'border rounded px-2 py-1 w-full',  # Tailwind styling
+        })
+    )
+
     class Meta:
         model = Transaction
         fields = "__all__"

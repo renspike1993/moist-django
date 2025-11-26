@@ -68,6 +68,7 @@
 				background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
 			}
 		</style>
+		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
 	</head>
 
 	<body class="bg-soft-50 text-soft-700">
@@ -240,6 +241,17 @@
 				</main>
 			</div>
 		</div>
+		<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+		<!-- if not already included -->
+		<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+		<script>
+			$(document).ready(function () {
+				$("#id_barcode").select2({
+					placeholder: "Select or type barcode",
+					allowClear: true,
+				});
+			});
+		</script>
 
 		<script>
 			// thin sidebar toggle
