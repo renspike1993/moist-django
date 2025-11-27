@@ -45,7 +45,7 @@
 		</div>
 	</div>
 
-	{% if book.barcodes.all %}
+	{% if barcode_data %}
 	<!-- Inventory Table -->
 	<div class="bg-white rounded-lg shadow overflow-x-auto">
 		<table class="w-full text-sm">
@@ -60,44 +60,44 @@
 			</thead>
 
 			<tbody class="divide-y divide-gray-200">
-				{% for barcode in book.barcodes.all %} {% with last_borrow=barcode.borrowedbook_set.last %}
+				{% for item in barcode_data %}
 				<tr class="hover:bg-gray-50">
 					<!-- BARCODE -->
-					<td class="px-4 py-2 font-mono text-gray-900">{{ barcode.barcode }}</td>
+					<td class="px-4 py-2 font-mono text-gray-900">{{ item.barcode.barcode }}</td>
 
 					<!-- STATUS -->
 					<td class="px-4 py-2">
-						{% if last_borrow %} {% if last_borrow.status == "borrowed" %}
-						<span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">Borrowed</span>
-						{% elif last_borrow.status == "overdue" %}
-						<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-semibold">Overdue</span>
-						{% elif last_borrow.status == "returned" %}
-						<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Returned</span>
-						{% endif %} {% else %}
-						<span class="px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs font-semibold">Available</span>
+						{% if item.status == "Borrowed" %}
+						<span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold"> Borrowed </span>
+						{% elif item.status == "Overdue" %}
+						<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded-full text-xs font-semibold"> Overdue </span>
+						{% elif item.status == "Returned" %}
+						<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold"> Returned </span>
+						{% else %}
+						<span class="px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs font-semibold"> Available </span>
 						{% endif %}
 					</td>
 
 					<!-- BORROWER -->
 					<td class="px-4 py-2 text-gray-700">
-						{% if last_borrow and last_borrow.status != "returned" %} {{ last_borrow.borrower.first_name }} {{ last_borrow.borrower.last_name }} {% else %}
+						{% if item.borrower %} {{ item.borrower.first_name }} {{ item.borrower.last_name }} {% else %}
 						<span class="text-gray-400 text-xs">—</span>
 						{% endif %}
 					</td>
 
 					<!-- DATE BORROWED -->
 					<td class="px-4 py-2 text-gray-700">
-						{% if last_borrow and last_borrow.status != "returned" %} {{ last_borrow.date_borrowed|date:"M j, Y" }} {% else %}
+						{% if item.borrowed_record %} {{ item.borrowed_record.date_borrowed|date:"M j, Y" }} {% else %}
 						<span class="text-gray-400 text-xs">—</span>
 						{% endif %}
 					</td>
 
 					<!-- ACTIONS -->
 					<td class="px-4 py-2 text-right flex gap-2 justify-end">
-						<a href="{% url 'bookbarcode_delete' book.pk barcode.pk %}" class="px-2 py-1 text-red-600 border border-red-400 rounded hover:bg-red-50 text-xs flex items-center gap-1"> <i class="fas fa-trash text-xs"></i> Delete </a>
+						<a href="{% url 'bookbarcode_delete' book.pk item.barcode.pk %}" class="px-2 py-1 text-red-600 border border-red-400 rounded hover:bg-red-50 text-xs flex items-center gap-1"> <i class="fas fa-trash text-xs"></i> Delete </a>
 					</td>
 				</tr>
-				{% endwith %} {% endfor %}
+				{% endfor %}
 			</tbody>
 		</table>
 	</div>

@@ -115,16 +115,54 @@ class CollectionForm(forms.ModelForm):
         }
 
 
+
 class TransactionForm(forms.ModelForm):
-    # Override barcode field
+
     barcode = forms.ModelChoiceField(
-        queryset=BookBarcode.objects.all(),
+        queryset=BookBarcode.objects.none(),  # set dynamically
         required=False,
         widget=forms.Select(attrs={
-            'class': 'border rounded px-2 py-1 w-full',  # Tailwind styling
+            'class': 'border rounded px-2 py-1 w-full',
         })
     )
 
     class Meta:
         model = Transaction
         fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # ✅ Get barcodes that are currently borrowed
+        borrowed_barcodes = Transaction.objects.filter(
+            status="borrowed"
+        ).values_list("barcode_id", flat=True)
+
+        # ✅ Display "(Not available)" text
+        self.fields["barcode"].label_from_instance = lambda obj: (
+            f"{obj} (Not available)" if obj.id in borrowed_barcodes else str(obj)
+        )
+
+        # ✅ ADD MODE → Show only AVAILABLE barcodes
+        if not self.instance.pk:
+            self.fields["barcode"].queryset = BookBarcode.objects.exclude(
+                id__in=borrowed_barcodes
+            )
+
+        # ✅ EDIT MODE
+        else:
+            # Lock fields on edit
+            self.fields["borrower"].disabled = True
+            self.fields["borrower"].disabled = True
+            self.fields["date_borrowed"].disabled = True
+            self.fields["due_date"].disabled = True
+            self.fields["date_returned"].disabled = True
+            self.fields["book"].disabled = True
+
+            # ✅ Show only barcodes for the same book
+            if self.instance.book:
+                self.fields["barcode"].queryset = BookBarcode.objects.filter(
+                    book=self.instance.book
+                )
+            else:
+                self.fields["barcode"].queryset = BookBarcode.objects.none()

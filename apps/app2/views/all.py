@@ -290,32 +290,37 @@ def opac(request):
         'search_query': query
     })
 
-
-# List all books
 @login_required
 def book_list(request):
-    return render(request, 'app2/book/book_list.html', {'books': Book.objects.all() })
+    books = Book.objects.annotate(
+        borrowed_total=Count(
+            'transactions',   # ✅ FIXED HERE
+            filter=Q(transactions__status="borrowed")
+        )
+    ).prefetch_related("barcodes")
 
+    return render(request, 'app2/book/book_list.html', {
+        'books': books
+    })
 
 # View book details
 @login_required
 def book_detail(request, pk):
     book = get_object_or_404(Book, pk=pk)
-    
-    # Fetch copies with status
-    barcodes = book.barcodes.all().select_related(None)
+
+    barcodes = book.barcodes.all()
 
     barcode_data = []
 
     for bc in barcodes:
-        # Check if this copy is borrowed and not returned
-        borrowed_record = BorrowedBook.objects.filter(
-            barcode=bc, status="borrowed"
-        ).select_related("borrower").first()
+        # ✅ CHECK FROM TRANSACTION INSTEAD OF BorrowedBook
+        transaction = Transaction.objects.filter(
+            barcode=bc
+        ).exclude(status="returned").select_related("borrower").order_by("-id").first()
 
-        if borrowed_record:
-            status = "Borrowed"
-            borrower = borrowed_record.borrower
+        if transaction:
+            status = transaction.status.capitalize()
+            borrower = transaction.borrower
         else:
             status = "Available"
             borrower = None
@@ -324,7 +329,7 @@ def book_detail(request, pk):
             "barcode": bc,
             "status": status,
             "borrower": borrower,
-            "borrowed_record": borrowed_record,
+            "transaction": transaction,
         })
 
     context = {
