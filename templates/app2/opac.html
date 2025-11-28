@@ -251,7 +251,8 @@
 			.book-cover {
 				width: 150px;
 				min-width: 150px;
-				height: 200px;
+				min-height: 200px;
+				max-height: 300px;
 				background-color: #f8f9fa;
 				display: flex;
 				align-items: center;
@@ -259,7 +260,7 @@
 				color: var(--primary);
 				font-size: 14px;
 				text-align: center;
-				padding: 5px;
+				padding: 0px;
 				border-right: 1px solid #eee;
 			}
 
@@ -858,14 +859,20 @@
 						<h1>MOIST OPAC</h1>
 					</div>
 					<div class="search-bar">
-						<input type="text" placeholder="Search for books, authors, or topics..." />
+						<form method="get" action="{% url 'opac' %}">
+							<input type="text" name="q" value="{{ search_query }}" placeholder="Scan Book or Enter books, authors, or topics to search..." class="form-control" />
+						</form>
 					</div>
+
 					<div class="user-actions">
+						{% if request.user.is_superuser %}
+						<a href="{% url 'dashboard' %}" class="btn btn-secondary flex items-center gap-1"> <i class="fas fa-arrow-left"></i> Back </a>
+						{% endif %}
+
 						<div class="cart-icon">
 							<i class="fas fa-shopping-cart fa-lg"></i>
 							<span class="cart-count">0</span>
 						</div>
-						<button class="btn-login">Sign In</button>
 					</div>
 				</div>
 			</div>
@@ -895,21 +902,6 @@
 					<div class="section-header">
 						<h2>Featured Books</h2>
 						<div class="filter-options">
-							<select>
-								<option>All Categories</option>
-								<option>Fiction</option>
-								<option>Science</option>
-								<option>History</option>
-								<option>Biography</option>
-							</select>
-							<select>
-								<option value="" disabled selected>Sort by</option>
-								<option>Sort by: Top 10 Dean's Listers Choice</option>
-								<option>Sort by: Top 10 most searched books</option>
-								<option>Sort by: Top 10 most searched Authors</option>
-								<option>Sort by: Top 10 most searched Gategory</option>
-							</select>
-
 							<div class="pagination">
 								<span class="step-links">
 									{% if page_obj.has_previous %}
@@ -932,8 +924,8 @@
 						{% for book in books %}
 						<div class="book-media">
 							<div class="book-cover library-avatar-book">
-								{% if book.image %}
-								<img src="{{ book.image.url }}" width="100%" />
+								{% if book.cover_image %}
+								<img src="{{ book.cover_image.url }}" width="100%" alt="{{ book.title }}" />
 								{% else %}
 								<span class="text-muted">No Image</span>
 								{% endif %}
@@ -941,8 +933,8 @@
 							<div class="book-details">
 								<div class="book-header">
 									<div>
-										<div class="book-title">{{ book.title }}</div>
-										<div class="book-author">{{ book.author }}</div>
+										<div class="book-title">{{ book.title|safe }}</div>
+										<div class="book-author">{{ book.author|safe }}</div>
 										<div id="book_rfid" style="display: none">{{ book.rfid }}</div>
 									</div>
 									<div class="availability {% if book.copies|default:0 == 0 %}unavailable{% endif %}">
@@ -950,7 +942,7 @@
 										<span>{% if book.copies|default:0 != 0 %}Available{% else %}Unavailable{% endif %}</span>
 									</div>
 								</div>
-								<div class="book-description">{{ book.summary }}</div>
+								<div class="book-description">{{ book.summary|safe }}</div>
 								<div class="book-meta">
 									<div class="meta-item"><i class="fas fa-book"></i> <span>{{ book.category }}</span></div>
 									<div class="meta-item"><i class="fas fa-calendar-alt"></i> <span>{{ book.year }}</span></div>
@@ -960,19 +952,10 @@
 								</div>
 								<div class="book-actions">
 									<div class="button-group">
-										<button class="btn reserve-btn" data-book-id="{{ book.id }}" data-book-title="{{ book.title }}" data-book-author="{{ book.author }}">
-											<i class="fas fa-bookmark"></i> Reserve
-										</button>
-										<button class="btn marc-btn" data-bs-toggle="modal" data-bs-target="#marc21Modal" 
-												data-title="{{ book.title }}" 
-												data-marc="{{ book.marc_data|default:'No MARC-21 data available.' }}">
-											<i class="fas fa-id-card"></i> MARC-21
-										</button>
-										<button class="btn isbd-btn" data-bs-toggle="modal" data-bs-target="#isbdModal" 
-												data-title="{{ book.title }}" 
-												data-isbd="{{ book.isbd_data|default:'No ISBD data available.' }}">
-											<i class="fas fa-file"></i> ISBD
-										</button>
+										<button class="btn reserve-btn" data-book-id="{{ book.pk }}" data-book-title="{{ book.title }}" data-book-author="{{ book.author }}"><i class="fas fa-bookmark"></i> Reserve</button>
+										<a href="{% url 'book_marc21' book.pk %}" class="btn marc-btn flex items-center gap-1"> <i class="fas fa-id-card"></i> MARC-21 </a>
+
+										<a href="{% url 'book_isbd' book.pk %}" class="btn isbd-btn flex items-center gap-1"> <i class="fas fa-file"></i> ISBD </a>
 									</div>
 								</div>
 							</div>
@@ -1067,7 +1050,7 @@
 		</div>
 
 		<!-- MARC-21 Modal -->
-		<div class="modal fade" id="marc21Modal" tabindex="-1" aria-labelledby="marc21ModalLabel" aria-hidden="true">
+		<div class="modal" id="marc21Modal" tabindex="-1" aria-labelledby="marc21ModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content shadow-lg border-0">
 					<div class="modal-header bg-primary text-white">
@@ -1103,7 +1086,7 @@
 		<script>
 			// Book data structure for localStorage
 			const CART_STORAGE_KEY = "library_cart";
-			const CHECKOUT_ROUTE = "/api/reservations"; // Replace with your actual route
+			const CHECKOUT_ROUTE = "/api/reservations/"; // Replace with your actual route
 
 			// Initialize cart from localStorage
 			function initializeCart() {
@@ -1128,7 +1111,7 @@
 				if (!existingItem) {
 					cart.push(bookData);
 					saveCart(cart);
-					alert(`"${bookData.title}" has been added to your cart!`);
+					// alert(`"${bookData.title}" has been added to your cart!`);
 				} else {
 					alert(`"${bookData.title}" is already in your cart!`);
 				}
@@ -1187,25 +1170,29 @@
 					});
 				});
 			}
-
 			// Send reservation data to server
 			async function sendReservation(reservationData) {
 				try {
-					const response = await fetch(CHECKOUT_ROUTE, {
+					const response = await fetch("http://127.0.0.1:8000/library/api/reservations/", {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
-							"X-CSRFToken": getCSRFToken(), // If using Django CSRF protection
+							"X-CSRFToken": getCSRFToken(), // VERY IMPORTANT
 						},
 						body: JSON.stringify(reservationData),
 					});
 
-					if (response.ok) {
-						window.location.reload();
-						return await response.json();
-					} else {
+					if (!response.ok) {
+						const err = await response.text();
+						console.error("Server error:", err);
 						throw new Error("Failed to submit reservation");
 					}
+
+					const data = await response.json();
+					console.log("SUCCESS:", data);
+
+					window.location.reload();
+					return data;
 				} catch (error) {
 					console.error("Error submitting reservation:", error);
 					throw error;
@@ -1235,28 +1222,27 @@
 				initializeCart();
 
 				// MARC-21 and ISBD modal functionality
-				const marc21Modal = document.getElementById('marc21Modal');
-				const isbdModal = document.getElementById('isbdModal');
-
+				const marc21Modal = document.getElementById("marc21Modal");
+				const isbdModal = document.getElementById("isbdModal");
 				if (marc21Modal) {
-					marc21Modal.addEventListener('show.bs.modal', function (event) {
+					marc21Modal.addEventListener("show.bs.modal", function (event) {
 						const button = event.relatedTarget;
-						const title = button.getAttribute('data-title');
-						const marcData = button.getAttribute('data-marc');
-						
-						document.getElementById('marc21BookTitle').textContent = title || '';
-						document.getElementById('marc21Content').textContent = marcData || 'No MARC-21 data available.';
+						const title = button.getAttribute("data-title");
+						const marcData = button.getAttribute("data-marc");
+						marc21Modal.style.display = "flex";
+						// document.getElementById("marc21BookTitle").textContent = title || "";
+						// document.getElementById("marc21Content").textContent = marcData || "No MARC-21 data available.";
 					});
 				}
 
 				if (isbdModal) {
-					isbdModal.addEventListener('show.bs.modal', function (event) {
+					isbdModal.addEventListener("show.bs.modal", function (event) {
 						const button = event.relatedTarget;
-						const title = button.getAttribute('data-title');
-						const isbdData = button.getAttribute('data-isbd');
-						
-						document.getElementById('isbdBookTitle').textContent = title || '';
-						document.getElementById('isbdContent').textContent = isbdData || 'No ISBD data available.';
+						const title = button.getAttribute("data-title");
+						const isbdData = button.getAttribute("data-isbd");
+						isbdModal.style.display = "flex";
+						document.getElementById("isbdBookTitle").textContent = title || "";
+						document.getElementById("isbdContent").textContent = isbdData || "No ISBD data available.";
 					});
 				}
 
@@ -1266,37 +1252,14 @@
 						const bookId = this.getAttribute("data-book-id");
 						const bookTitle = this.getAttribute("data-book-title");
 						const bookAuthor = this.getAttribute("data-book-author");
-						const bookRfid = prompt("Please enter RFID manually or scan the book directly:", "");
-
-						if (!bookRfid) {
-							alert("⚠️ RFID is required!");
-							return;
-						}
-
-						// ✅ Check RFID in database first
-						fetch(`/api/check-rfid/${bookRfid}/`)
-							.then((response) => {
-								if (!response.ok) throw new Error("Network error");
-								return response.json();
-							})
-							.then((data) => {
-								if (data.exists) {
-									// RFID exists → Add to cart
-									const bookData = {
-										id: bookId,
-										title: bookTitle,
-										author: bookAuthor,
-										rfid: bookRfid,
-									};
-									addToCart(bookData);
-								} else {
-									alert("❌ RFID not found in the database!");
-								}
-							})
-							.catch((error) => {
-								console.error("Error checking RFID:", error);
-								alert("⚠️ Unable to verify RFID right now.");
-							});
+						const bookRfid = null;
+						const bookData = {
+							id: bookId,
+							title: bookTitle,
+							author: bookAuthor,
+							rfid: bookRfid,
+						};
+						addToCart(bookData);
 					});
 				});
 
@@ -1333,11 +1296,6 @@
 				confirmBtn.addEventListener("click", async function () {
 					const idNumber = document.getElementById("idNumber").value;
 					const cart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || [];
-
-					if (!idNumber) {
-						alert("Please scan your ID or enter your library ID number to complete checkout.");
-						return;
-					}
 
 					try {
 						// Prepare reservation data with proper book IDs

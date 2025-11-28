@@ -5,7 +5,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Student,Folder
 from .forms import StudentForm
 from django.contrib import messages
-from apps.app2.models import BorrowedBook
+from apps.app2.models import BorrowedBook,Transaction
+
+
 from .forms import FolderForm
 
 @login_required
@@ -24,10 +26,18 @@ def student_list(request):
 def student_detail(request, pk):
     student = get_object_or_404(Student, pk=pk)
     borrowed_books = student.borrowed_books.select_related("book").all()
+    transactions = Transaction.objects.select_related(
+            "book", "borrower"
+        ).filter(
+            borrower_id=pk
+        ).order_by("-date_borrowed")
+    
+
 
     return render(request, "app1/student/student_detail.html", {
         "student": student,
         "borrowed_books": borrowed_books,
+        "transactions": transactions,
     })
 
 # CREATE

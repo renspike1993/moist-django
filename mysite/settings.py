@@ -9,7 +9,7 @@ SECRET_KEY = 'django-insecure-change-me-in-production'
 DEBUG = True
 
 # For development this is okay — in production specify domains
-ALLOWED_HOSTS = ['*','192.168.10.116']
+ALLOWED_HOSTS = ['*','192.168.10.116','moist-django.onrender.com']
 
 
 # -------------------------------------------------------------------
@@ -42,8 +42,46 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+    
 
+    # 'core.middleware.RouteAccessLogMiddleware',
+    "mysite.middleware.request_logging.RequestLoggingMiddleware",
+]
+import logging
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] {levelname} {message}",
+            "style": "{",
+        },
+        "request_verbose": {
+            "format": "[{asctime}] {levelname} {method} {path} "
+                      "User={user} IP={ip} Status={status_code}",
+            "style": "{",
+        },
+    },
+
+    "handlers": {
+        "request_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": BASE_DIR / "requests.log",
+            "formatter": "request_verbose",
+        },
+    },
+
+    "loggers": {
+        "django.request": {
+            "handlers": ["request_file"],
+            "level": "INFO",
+            "propagate": True,
+        },
+    },
+}
 
 ROOT_URLCONF = 'mysite.urls'
 
@@ -84,7 +122,11 @@ DATABASES = {
     }
 }
 
+# import dj_database_url
 
+# DATABASES = {
+#     'default': dj_database_url.config(default='sqlite:///db.sqlite3', conn_max_age=600)
+# }
 # -------------------------------------------------------------------
 # Authentication Redirects
 # -------------------------------------------------------------------
@@ -116,6 +158,12 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']   # shared static
 STATIC_ROOT = BASE_DIR / 'staticfiles'     # for collectstatic (prod)
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # -------------------------------------------------------------------
 # Default PK field type

@@ -1,316 +1,271 @@
-{% load static %}
-{% load custom_filters %}
+{% load static %} {% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Admin Dashboard</title>
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Admin Dashboard</title>
-	<script src="https://cdn.tailwindcss.com"></script>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-	<script>
-		tailwind.config = {
-			theme: {
-				extend: {
-					colors: {
-						primary: {
-							50: '#fafbfc',
-							100: '#f4f6f8',
-							200: '#e5e9f0',
-							300: '#d1d9e6',
-							400: '#9faec7',
-							500: '#6b7ba0',
-							600: '#4a5a7a',
-							700: '#374258',
-							800: '#252e40',
-							900: '#171d2d',
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+		<script>
+			tailwind.config = {
+				theme: {
+					extend: {
+						colors: {
+							soft: {
+								50: "#fafafa",
+								100: "#f4f4f5",
+								200: "#e4e4e7",
+								300: "#d4d4d8",
+								400: "#a1a1aa",
+								500: "#71717a",
+								600: "#52525b",
+								700: "#3f3f46",
+								800: "#27272a",
+								900: "#18181b",
+							},
+							accent: {
+								500: "#4F46E5",
+								600: "#4338CA",
+								700: "#3730A3",
+							},
 						},
-						elegant: {
-							50: '#f8f9fa',
-							100: '#e9ecef',
-							200: '#dee2e6',
-							300: '#ced4da',
-							400: '#adb5bd',
-							500: '#6c757d',
-							600: '#495057',
-							700: '#343a40',
-							800: '#212529',
-							900: '#121417',
+						fontFamily: {
+							sans: ["Inter", "system-ui", "sans-serif"],
 						},
-						accent: {
-							50: '#f0f9ff',
-							100: '#e0f2fe',
-							200: '#bae6fd',
-							300: '#7dd3fc',
-							400: '#38bdf8',
-							500: '#0ea5e9',
-							600: '#0284c7',
-							700: '#0369a1',
-							800: '#075985',
-							900: '#0c4a6e',
-						}
 					},
-					fontFamily: {
-						'sans': ['Inter', 'system-ui', 'sans-serif'],
-					}
-				}
+				},
+			};
+		</script>
+
+		<style>
+			@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap");
+
+			* {
+				font-family: "Inter", sans-serif;
 			}
-		}
-	</script>
-	<style>
-		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-		
-		* {
-			font-family: 'Inter', sans-serif;
-		}
-		
-		.sidebar-transition {
-			transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-		}
 
-		.content-transition {
-			transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-		}
+			.thin-sidebar {
+				transition: all 0.2s ease;
+			}
 
-		.active-nav-item {
-			background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
-			color: white;
-			font-weight: 500;
-			box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
-		}
-		
-		.nav-icon {
-			width: 18px;
-			text-align: center;
-		}
-		
-		.slim-scrollbar::-webkit-scrollbar {
-			width: 4px;
-		}
-		
-		.slim-scrollbar::-webkit-scrollbar-track {
-			background: #f1f5f9;
-			border-radius: 2px;
-		}
-		
-		.slim-scrollbar::-webkit-scrollbar-thumb {
-			background: #cbd5e1;
-			border-radius: 2px;
-		}
-		
-		.slim-scrollbar::-webkit-scrollbar-thumb:hover {
-			background: #94a3b8;
-		}
+			.slim-scrollbar::-webkit-scrollbar {
+				width: 3px;
+			}
 
-		.glass-sidebar {
-			background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
-			backdrop-filter: blur(10px);
-		}
+			.slim-scrollbar::-webkit-scrollbar-track {
+				background: transparent;
+			}
 
-		.glass-header {
-			background: rgba(255, 255, 255, 0.95);
-			backdrop-filter: blur(10px);
-			border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-		}
+			.slim-scrollbar::-webkit-scrollbar-thumb {
+				background: #4b5563;
+				border-radius: 2px;
+			}
 
-		.elegant-shadow {
-			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-		}
+			.dark-sidebar {
+				background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+			}
+		</style>
+		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+	</head>
 
-		.hover-lift {
-			transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-		}
-
-		.hover-lift:hover {
-			transform: translateY(-1px);
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-		}
-	</style>
-</head>
-
-<body class="bg-elegant-50">
-	<div class="flex h-screen">
-		<!-- Elegant Sidebar -->
-		<div class="sidebar-transition w-20 lg:w-56 glass-sidebar border-r border-elegant-700 flex flex-col elegant-shadow">
-			<!-- Logo -->
-			<div class="p-5 lg:p-6 border-b border-elegant-700">
-				<h1 class="text-xl font-bold flex items-center justify-center lg:justify-start">
-					<div class="w-8 h-8 bg-gradient-to-br from-accent-500 to-accent-600 rounded-lg flex items-center justify-center shadow-lg">
-						<i class="fas fa-cube text-white text-sm"></i>
+	<body class="bg-soft-50 text-soft-700">
+		<div class="flex h-screen overflow-hidden">
+			<!-- DARK ELEGANT SIDEBAR -->
+			<aside class="thin-sidebar w-16 lg:w-52 dark-sidebar border-r border-gray-700 flex flex-col">
+				<!-- Logo -->
+				<div class="px-4 py-5 border-b border-gray-700">
+					<div class="flex items-center space-x-2 lg:space-x-3">
+						<div class="w-8 h-8 rounded-md bg-gradient-to-r from-accent-500 to-purple-600 flex items-center justify-center text-white text-xs shadow-lg">
+							<i class="fa-solid fa-cube"></i>
+						</div>
+						<span class="hidden lg:block text-sm tracking-wide font-semibold text-white"> LIBRARY<span class="text-accent-400"></span> </span>
 					</div>
-					<span class="hidden lg:inline ml-3 text-white font-light tracking-wide">MOIST<span class="font-semibold text-accent-300">INC</span></span>
-				</h1>
-			</div>
-
-			<!-- User Profile -->
-			<div class="p-4 border-b border-elegant-700 flex items-center justify-center lg:justify-start space-x-0 lg:space-x-3">
-				<div class="h-9 w-9 rounded-full bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center text-white text-sm font-medium shadow-lg hover-lift">
-					RC
-				</div>
-				<div class="hidden lg:block">
-					<p class="text-sm font-medium text-white">Rene M. Cabuhan II</p>
-					<p class="text-xs text-elegant-300">Administrator</p>
-				</div>
-			</div>
-
-			<!-- Navigation -->
-			<div class="flex-1 overflow-y-auto py-5">
-				<ul class="space-y-2 px-3">
-					<li>
-						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift
-   {% if request.resolver_match.url_name == 'dashboard' %} active-nav-item {% endif %}">
-							<i class="fas fa-tachometer-alt nav-icon"></i>
-							<span class="hidden lg:inline ml-3 text-sm">Dashboard</span>
-						</a>
-					</li>
-
-					<li>
-						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift
-   {% if request.resolver_match.url_name == 'transactions' %} active-nav-item {% endif %}">
-							<i class="fas fa-exchange-alt nav-icon"></i>
-							<span class="hidden lg:inline ml-3 text-sm">Transactions</span>
-						</a>
-					</li>
-
-					<li>
-						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift
-   {% if request.resolver_match.url_name == 'collections' %} active-nav-item {% endif %}">
-							<i class="fas fa-folder nav-icon"></i>
-							<span class="hidden lg:inline ml-3 text-sm">Collections</span>
-						</a>
-					</li>
-
-					<li>
-						<a href="{% url 'book_list' %}" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift
-   {% if request.resolver_match.url_name == 'book_list' %} active-nav-item {% endif %}">
-							<i class="fas fa-book nav-icon"></i>
-							<span class="hidden lg:inline ml-3 text-sm">Books</span>
-						</a>
-					</li>
-
-					<li>
-						<a href="{% url 'library_students' %}" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift
-   {% if request.resolver_match.url_name == 'library_students' %} active-nav-item {% endif %}">
-							<i class="fas fa-users nav-icon"></i>
-							<span class="hidden lg:inline ml-3 text-sm">Members</span>
-						</a>
-					</li>
-				</ul>
-
-				<!-- Section Divider -->
-				<div class="px-3 mt-8 mb-3 hidden lg:block">
-					<p class="text-xs uppercase text-elegant-400 font-medium tracking-wider">Tools</p>
 				</div>
 
-				<ul class="space-y-2 px-3 mt-4">
-					<li>
-						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift">
-							<i class="fas fa-boxes nav-icon"></i>
-							<span class="hidden lg:inline ml-3 text-sm">Inventory</span>
-						</a>
-					</li>
-					<li>
-						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift">
-							<i class="fas fa-chart-bar nav-icon"></i>
-							<span class="hidden lg:inline ml-3 text-sm">Reports</span>
-						</a>
-					</li>
+				<!-- User -->
+				<div class="px-4 py-4 border-b border-gray-700 flex items-center space-x-3">
+					<div class="h-8 w-8 rounded-full bg-gradient-to-r from-accent-500 to-purple-600 text-white flex items-center justify-center text-xs shadow-md">RC</div>
+					<div class="hidden lg:block">
+						<p class="text-xs font-medium text-white">{{ request.user.get_full_name|default:request.user.username }}</p>
+						<p class="text-[11px] text-gray-400">{{ request.user.role|default:"Super Admin" }}</p>
+					</div>
+				</div>
 
-					<li>
-						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift relative">
-							<i class="fas fa-envelope nav-icon"></i>
-							<span class="hidden lg:inline ml-3 text-sm">Messages</span>
-							<span class="absolute -top-1 -right-1 bg-red-400 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center shadow">3</span>
-						</a>
-					</li>
-					<li>
-						<a href="#" class="flex items-center p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift">
-							<i class="fas fa-cog nav-icon"></i>
-							<span class="hidden lg:inline ml-3 text-sm">Settings</span>
-						</a>
-					</li>
-				</ul>
-			</div>
+				<!-- Navigation -->
+				<nav class="flex-1 overflow-y-auto slim-scrollbar py-4">
+					<ul class="space-y-1 px-3 text-sm">
+						{% comment %} DASHBOARD {% endcomment %}
+						<li>
+							<a href="{% url 'dashboard' %}" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 transition-all duration-200 {% if request.resolver_match.url_name == 'dashboard' %} bg-gray-700 text-white {% else %} text-gray-300 {% endif %}">
+								<i class="fa-solid fa-gauge text-xs w-4"></i>
+								<span class="hidden lg:block ml-3">Dashboard</span>
+							</a>
+						</li>
 
-			<!-- Sidebar Footer -->
-			<div class="p-4 border-t border-elegant-700">
-				{% if user.is_authenticated %}
-				<form method="POST" action="{% url 'logout' %}">
-					{% csrf_token %}
-					<button class="flex items-center w-full p-3 rounded-xl text-elegant-200 hover:bg-elegant-700 hover:text-white transition-all duration-200 hover-lift" type="submit">
-						<i class="fas fa-sign-out-alt nav-icon"></i>
-						<span class="hidden lg:inline ml-3 text-sm">Logout</span>
-					</button>
-				</form>
-				{% endif %}
-			</div>
-		</div>
+						<li>
+							<a href="{% url 'transaction_list' %}" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 transition-all duration-200 {% if request.resolver_match.url_name == 'transaction_list' %} bg-gray-700 text-white {% else %} text-gray-300 {% endif %}">
+								<i class="fa-solid fa-arrow-right-arrow-left text-xs w-4"></i>
+								<span class="hidden lg:block ml-3">Transactions</span>
+							</a>
+						</li>
 
-		<!-- Main Content -->
-		<div class="content-transition flex-1 flex flex-col overflow-hidden">
-			<!-- Elegant Header -->
-			<header class="glass-header z-10 elegant-shadow">
-				<div class="flex items-center justify-between p-4 lg:p-5">
-					<div class="flex items-center">
-						<button id="sidebarToggle" class="p-2 rounded-lg text-elegant-600 hover:bg-elegant-100 hover:text-elegant-800 transition-all duration-200">
-							<i class="fas fa-bars text-sm"></i>
+						<li>
+							<a href="{% url 'collection_list' %}" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 transition-all duration-200 {% if request.resolver_match.url_name == 'collection_list' %} bg-gray-700 text-white {% else %} text-gray-300 {% endif %}">
+								<i class="fa-solid fa-folder text-xs w-4"></i>
+								<span class="hidden lg:block ml-3">Collections</span>
+							</a>
+						</li>
+
+						<li>
+							<a href="{% url 'book_list' %}" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 transition-all duration-200 {% if request.resolver_match.url_name == 'book_list' %} bg-gray-700 text-white {% else %} text-gray-300 {% endif %}">
+								<i class="fa-solid fa-book text-xs w-4"></i>
+								<span class="hidden lg:block ml-3">Books</span>
+							</a>
+						</li>
+
+						<li>
+							<a href="{% url 'library_students' %}" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 transition-all duration-200 {% if request.resolver_match.url_name == 'library_students' %} bg-gray-700 text-white {% else %} text-gray-300 {% endif %}">
+								<i class="fa-solid fa-users text-xs w-4"></i>
+								<span class="hidden lg:block ml-3">Students</span>
+							</a>
+						</li>
+
+						<li>
+							<a href="{% url 'library_students' %}" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 transition-all duration-200 {% if request.resolver_match.url_name == 'staffs' %} bg-gray-700 text-white {% else %} text-gray-300 {% endif %}">
+								<i class="fa-solid fa-users text-xs w-4"></i>
+								<span class="hidden lg:block ml-3">Faculty & Staffs</span>
+							</a>
+						</li>
+					</ul>
+
+					<div class="hidden lg:block px-3 mt-6 mb-2 text-[11px] uppercase text-gray-500 tracking-wider">Tools</div>
+
+					<ul class="space-y-1 px-3 text-sm">
+						<li>
+							<a href="{% url 'opac' %}" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 text-gray-300 transition-all duration-200">
+								<i class="fa-solid fa-boxes text-xs w-4"></i>
+								<span class="hidden lg:block ml-3">OPAC</span>
+							</a>
+						</li>
+
+						<li>
+							<a href="#" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 text-gray-300 transition-all duration-200">
+								<i class="fa-solid fa-boxes text-xs w-4"></i>
+								<span class="hidden lg:block ml-3">Inventory</span>
+							</a>
+						</li>
+						<li>
+							<a href="#" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 text-gray-300 transition-all duration-200">
+								<i class="fa-solid fa-chart-bar text-xs w-4"></i>
+								<span class="hidden lg:block ml-3">Reports</span>
+							</a>
+						</li>
+						<li>
+							<a href="{% url 'manual' %}" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-700 text-gray-300 transition-all duration-200 {% if request.resolver_match.url_name == 'manual' %} bg-gray-700 text-white {% else %} text-gray-300 {% endif %}">
+								<i class="fa-solid fa-book-open text-xs w-4"></i>
+								<span class="hidden lg:block ml-3">User Manual</span>
+							</a>
+						</li>
+					</ul>
+				</nav>
+
+				<!-- Logout -->
+				<div class="border-t border-gray-700 p-3">
+					{% if user.is_authenticated %}
+					<form method="POST" action="{% url 'logout' %}">
+						{% csrf_token %}
+						<button class="flex items-center w-full px-3 py-2 text-sm rounded-lg hover:bg-gray-700 text-gray-300 transition-all duration-200" type="submit">
+							<i class="fa-solid fa-arrow-right-from-bracket text-xs w-4"></i>
+							<span class="hidden lg:block ml-3">Logout</span>
 						</button>
-						<div class="ml-3 lg:ml-4 relative">
-							<input type="text" placeholder="Search..."
-								class="pl-10 pr-4 py-2 rounded-xl border border-elegant-200 bg-white text-elegant-800 placeholder-elegant-400 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500 w-48 lg:w-72 text-sm transition-all duration-200">
-							<i class="fas fa-search absolute left-3 top-2.5 text-elegant-400 text-sm"></i>
+					</form>
+					{% endif %}
+				</div>
+			</aside>
+
+			<!-- MAIN AREA -->
+			<div class="flex-1 flex flex-col overflow-hidden">
+				<!-- HEADER -->
+				<header class="bg-white border-b border-soft-200 px-4 py-3 flex items-center justify-between">
+					<div class="flex items-center space-x-2">
+						<button id="sidebarToggle" class="p-2 rounded-md hover:bg-soft-100 text-soft-600">
+							<i class="fa-solid fa-bars text-sm"></i>
+						</button>
+
+						<div class="relative">
+							<i class="fa-solid fa-search absolute left-3 top-2 text-soft-400 text-xs"></i>
+							<input type="text" placeholder="Search..." class="pl-9 pr-3 py-1.5 text-sm border border-soft-300 rounded-lg focus:ring-accent-500 focus:border-accent-500 w-48 lg:w-64" />
 						</div>
 					</div>
 
-					<div class="flex items-center space-x-3 lg:space-x-4">
-						<button class="p-2 rounded-lg text-elegant-600 hover:bg-elegant-100 hover:text-elegant-800 transition-all duration-200 relative">
-							<i class="fas fa-bell text-sm"></i>
-							<span class="absolute -top-1 -right-1 bg-red-400 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center shadow">5</span>
+					<div class="flex items-center space-x-3">
+						<button class="relative p-2 rounded-md hover:bg-soft-100 text-soft-600">
+							<i class="fa-solid fa-bell text-sm"></i>
+							<span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] h-4 w-4 rounded-full flex items-center justify-center">5</span>
 						</button>
-						<button class="p-2 rounded-lg text-elegant-600 hover:bg-elegant-100 hover:text-elegant-800 transition-all duration-200">
-							<i class="fas fa-cog text-sm"></i>
+
+						<button class="p-2 rounded-md hover:bg-soft-100 text-soft-600">
+							<i class="fa-solid fa-gear text-sm"></i>
 						</button>
-						<div class="h-8 w-8 rounded-full bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center text-white text-sm font-medium shadow-lg hover-lift">
-							JD
-						</div>
+
+						<div class="h-8 w-8 rounded-full bg-accent-500 text-white flex items-center justify-center text-xs">JD</div>
 					</div>
-				</div>
-			</header>
+				</header>
 
-			<!-- Elegant Content Area -->
-			<main class="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-elegant-50 to-elegant-100 slim-scrollbar">
-				{% block content %} {% endblock %}
-			</main>
+				<!-- CONTENT -->
+				<main class="flex-1 overflow-y-auto slim-scrollbar p-5 bg-soft-50">
+					{% block content %}{% endblock %}
+					<!-- Messages Alert -->
+					{% if messages %}
+					<div id="messages-container" class="fixed bottom-4 right-4 z-50 space-y-2">
+						{% for message in messages %}
+						<div class="message px-4 py-2 rounded shadow text-white {% if message.tags == 'success' %} bg-green-600 {% elif message.tags == 'error' %} bg-red-600 {% elif message.tags == 'warning' %} bg-yellow-500 {% else %} bg-blue-600 {% endif %}">{{ message }}</div>
+						{% endfor %}
+					</div>
+
+					<script>
+						// Automatically remove messages after 3 seconds
+						setTimeout(() => {
+							const container = document.getElementById("messages-container");
+							if (container) {
+								container.style.transition = "opacity 0.5s";
+								container.style.opacity = "0";
+								setTimeout(() => container.remove(), 500); // remove after fade out
+							}
+						}, 3000);
+					</script>
+					{% endif %}
+				</main>
+			</div>
 		</div>
-	</div>
-
-	<script>
-		// Toggle sidebar on mobile
-		document.getElementById('sidebarToggle').addEventListener('click', function () {
-			const sidebar = document.querySelector('.sidebar-transition');
-			const content = document.querySelector('.content-transition');
-
-			if (sidebar.classList.contains('w-20')) {
-				sidebar.classList.remove('w-20');
-				sidebar.classList.add('w-0', 'overflow-hidden');
-				content.classList.add('lg:ml-0');
-			} else {
-				sidebar.classList.remove('w-0', 'overflow-hidden');
-				sidebar.classList.add('w-20');
-				content.classList.remove('lg:ml-0');
-			}
-		});
-
-		// Set active navigation item
-		document.querySelectorAll('.sidebar-transition a').forEach(item => {
-			item.addEventListener('click', function () {
-				document.querySelectorAll('.sidebar-transition a').forEach(i => {
-					i.classList.remove('active-nav-item');
+		<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+		<!-- if not already included -->
+		<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+		<script>
+			$(document).ready(function () {
+				$("#id_barcode").select2({
+					placeholder: "Select or type barcode",
+					allowClear: true,
 				});
-				this.classList.add('active-nav-item');
 			});
-		});
-	</script>
-</body>
+		</script>
+
+		<script>
+			// thin sidebar toggle
+			document.getElementById("sidebarToggle").addEventListener("click", () => {
+				const sidebar = document.querySelector("aside");
+
+				if (sidebar.classList.contains("w-16")) {
+					sidebar.classList.remove("w-16");
+					sidebar.classList.add("w-0", "overflow-hidden");
+				} else {
+					sidebar.classList.remove("w-0", "overflow-hidden");
+					sidebar.classList.add("w-16");
+				}
+			});
+		</script>
+	</body>
 </html>
